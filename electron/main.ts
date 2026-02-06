@@ -122,7 +122,10 @@ function startServer(port: number): ChildProcess {
     PATH: `${basePath}:${home}/.npm-global/bin:${home}/.local/bin:${home}/.claude/bin:${shellPath}`,
   };
 
-  const child = spawn(nodePath, [serverPath], {
+  // Spawn via /bin/sh to prevent the Electron binary from appearing
+  // as a separate Dock icon on macOS (even with ELECTRON_RUN_AS_NODE=1,
+  // macOS may show a Dock entry for the Electron Framework binary).
+  const child = spawn('/bin/sh', ['-c', `exec "${nodePath}" "${serverPath}"`], {
     env,
     stdio: 'pipe',
     cwd: standaloneDir,

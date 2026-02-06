@@ -137,6 +137,10 @@ export function streamClaude(options: ClaudeStreamOptions): ReadableStream<strin
           abortController,
           includePartialMessages: true,
           permissionMode: (permissionMode as Options['permissionMode']) || 'acceptEdits',
+          // Explicitly pass the full process.env to the Claude Code subprocess.
+          // In packaged Electron, this includes user shell env vars (API keys, etc.)
+          // loaded by the main process via loadUserShellEnv().
+          env: process.env as Record<string, string>,
         };
 
         // Find claude binary for packaged app where PATH is limited
