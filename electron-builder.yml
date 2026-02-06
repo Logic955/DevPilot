@@ -1,0 +1,28 @@
+appId: com.codepilot.app
+productName: CodePilot
+directories:
+  output: release
+files:
+  - dist-electron/**/*
+  - .next/standalone/**/*
+  - .next/static/**/*
+  - public/**/*
+extraResources:
+  - from: .next/standalone/
+    to: standalone/
+    filter: ["**/*"]
+  - from: .next/static/
+    to: standalone/.next/static/
+    filter: ["**/*"]
+  - from: public/
+    to: standalone/public/
+    filter: ["**/*"]
+asarUnpack:
+  - "**/*.node"
+  - "**/better-sqlite3/**"
+mac:
+  icon: build/icon.icns
+  category: public.app-category.developer-tools
+  target:
+    - target: dmg
+      arch: [universal]

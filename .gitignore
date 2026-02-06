@@ -18,7 +18,7 @@
 /out/
 
 # production
-/build
+/build-next
 
 # misc
 .DS_Store
@@ -36,6 +36,17 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local database
+/data/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# electron
+/dist-electron/
+/release/
+
+# test artifacts
+/playwright-report/
+/test-results/

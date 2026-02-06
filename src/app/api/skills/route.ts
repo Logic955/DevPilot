@@ -1,0 +1,246 @@
+import { NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
+import os from "os";
+
+interface SkillFile {
+  name: string;
+  description: string;
+  content: string;
+  source: "global" | "project" | "plugin" | "installed";
+  filePath: string;
+}
+
+function getGlobalCommandsDir(): string {
+  return path.join(os.homedir(), ".claude", "commands");
+}
+
+function getProjectCommandsDir(): string {
+  return path.join(process.cwd(), ".claude", "commands");
+}
+
+function getPluginCommandsDirs(): string[] {
+  const dirs: string[] = [];
+  const marketplacesDir = path.join(os.homedir(), ".claude", "plugins", "marketplaces");
+  if (!fs.existsSync(marketplacesDir)) return dirs;
+
+  try {
+    // Scan marketplaces -> each marketplace -> plugins -> each plugin -> commands
+    const marketplaces = fs.readdirSync(marketplacesDir);
+    for (const marketplace of marketplaces) {
+      const pluginsDir = path.join(marketplacesDir, marketplace, "plugins");
+      if (!fs.existsSync(pluginsDir)) continue;
+      const plugins = fs.readdirSync(pluginsDir);
+      for (const plugin of plugins) {
+        const commandsDir = path.join(pluginsDir, plugin, "commands");
+        if (fs.existsSync(commandsDir)) {
+          dirs.push(commandsDir);
+        }
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return dirs;
+}
+
+function getInstalledSkillsDir(): string {
+  return path.join(os.homedir(), ".agents", "skills");
+}
+
+/**
+ * Parse YAML front matter from SKILL.md content.
+ * Extracts `name` and `description` fields from the --- delimited block.
+ */
+function parseSkillFrontMatter(content: string): { name?: string; description?: string } {
+  // Extract front matter between --- delimiters
+  const fmMatch = content.match(/^---\r?\n([\s\S]+?)\r?\n---/);
+  if (!fmMatch) return {};
+
+  const frontMatter = fmMatch[1];
+  const lines = frontMatter.split(/\r?\n/);
+  const result: { name?: string; description?: string } = {};
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    // Match name: value
+    const nameMatch = line.match(/^name:\s*(.+)/);
+    if (nameMatch) {
+      result.name = nameMatch[1].trim();
+      continue;
+    }
+
+    // Match description: | (multi-line YAML block scalar) — check FIRST
+    if (/^description:\s*\|/.test(line)) {
+      const descLines: string[] = [];
+      for (let j = i + 1; j < lines.length; j++) {
+        if (/^\s+/.test(lines[j])) {
+          descLines.push(lines[j].trim());
+        } else {
+          break;
+        }
+      }
+      if (descLines.length > 0) {
+        result.description = descLines.filter(Boolean).join(" ");
+      }
+      continue;
+    }
+
+    // Match description: value (single-line)
+    const descMatch = line.match(/^description:\s+(.+)/);
+    if (descMatch) {
+      result.description = descMatch[1].trim();
+    }
+  }
+  return result;
+}
+
+/**
+ * Scan ~/.agents/skills/ for installed skills (npx skills add).
+ * Each skill is a directory containing a SKILL.md with YAML front matter.
+ */
+function scanInstalledSkills(): SkillFile[] {
+  const skills: SkillFile[] = [];
+  const dir = getInstalledSkillsDir();
+  if (!fs.existsSync(dir)) return skills;
+
+  try {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+      const skillMdPath = path.join(dir, entry.name, "SKILL.md");
+      if (!fs.existsSync(skillMdPath)) continue;
+
+      const content = fs.readFileSync(skillMdPath, "utf-8");
+      const meta = parseSkillFrontMatter(content);
+      const name = meta.name || entry.name;
+      const description = meta.description || `Installed skill: /${name}`;
+
+      skills.push({
+        name,
+        description,
+        content,
+        source: "installed",
+        filePath: skillMdPath,
+      });
+    }
+  } catch {
+    // ignore read errors
+  }
+  return skills;
+}
+
+function scanDirectory(
+  dir: string,
+  source: "global" | "project" | "plugin"
+): SkillFile[] {
+  const skills: SkillFile[] = [];
+  if (!fs.existsSync(dir)) return skills;
+
+  try {
+    const files = fs.readdirSync(dir);
+    for (const file of files) {
+      if (!file.endsWith(".md")) continue;
+      const name = file.replace(/\.md$/, "");
+      const filePath = path.join(dir, file);
+      const content = fs.readFileSync(filePath, "utf-8");
+      const firstLine = content.split("\n")[0]?.trim() || "";
+      const description = firstLine.startsWith("#")
+        ? firstLine.replace(/^#+\s*/, "")
+        : firstLine || `Skill: /${name}`;
+      skills.push({ name, description, content, source, filePath });
+    }
+  } catch {
+    // ignore read errors
+  }
+  return skills;
+}
+
+export async function GET() {
+  try {
+    const globalSkills = scanDirectory(getGlobalCommandsDir(), "global");
+    const projectSkills = scanDirectory(getProjectCommandsDir(), "project");
+    const installedSkills = scanInstalledSkills();
+
+    // Scan installed plugin skills
+    const pluginSkills: SkillFile[] = [];
+    for (const dir of getPluginCommandsDirs()) {
+      pluginSkills.push(...scanDirectory(dir, "plugin"));
+    }
+
+    return NextResponse.json({ skills: [...globalSkills, ...projectSkills, ...installedSkills, ...pluginSkills] });
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Failed to load skills" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { name, content, scope } = body as {
+      name: string;
+      content: string;
+      scope: "global" | "project";
+    };
+
+    if (!name || typeof name !== "string") {
+      return NextResponse.json(
+        { error: "Skill name is required" },
+        { status: 400 }
+      );
+    }
+
+    // Sanitize name: only allow alphanumeric, hyphens, underscores
+    const safeName = name.replace(/[^a-zA-Z0-9_-]/g, "-");
+    if (!safeName) {
+      return NextResponse.json(
+        { error: "Invalid skill name" },
+        { status: 400 }
+      );
+    }
+
+    const dir =
+      scope === "project" ? getProjectCommandsDir() : getGlobalCommandsDir();
+
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    const filePath = path.join(dir, `${safeName}.md`);
+    if (fs.existsSync(filePath)) {
+      return NextResponse.json(
+        { error: "A skill with this name already exists" },
+        { status: 409 }
+      );
+    }
+
+    fs.writeFileSync(filePath, content || "", "utf-8");
+
+    const firstLine = (content || "").split("\n")[0]?.trim() || "";
+    const description = firstLine.startsWith("#")
+      ? firstLine.replace(/^#+\s*/, "")
+      : firstLine || `Skill: /${safeName}`;
+
+    return NextResponse.json(
+      {
+        skill: {
+          name: safeName,
+          description,
+          content: content || "",
+          source: scope || "global",
+          filePath,
+        },
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Failed to create skill" },
+      { status: 500 }
+    );
+  }
+}
