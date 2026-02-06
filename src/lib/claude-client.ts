@@ -138,6 +138,11 @@ export function streamClaude(options: ClaudeStreamOptions): ReadableStream<strin
         // Then overlay any API config the user set in CodePilot settings (optional).
         const sdkEnv: Record<string, string> = { ...process.env as Record<string, string> };
 
+        // Ensure HOME is explicitly set so Claude Code can find ~/.claude/commands/
+        if (!sdkEnv.HOME) {
+          sdkEnv.HOME = os.homedir();
+        }
+
         const appToken = getSetting('anthropic_auth_token');
         const appBaseUrl = getSetting('anthropic_base_url');
         if (appToken) {

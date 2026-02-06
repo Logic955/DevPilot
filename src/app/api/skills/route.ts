@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import os from "os";
@@ -15,8 +15,8 @@ function getGlobalCommandsDir(): string {
   return path.join(os.homedir(), ".claude", "commands");
 }
 
-function getProjectCommandsDir(): string {
-  return path.join(process.cwd(), ".claude", "commands");
+function getProjectCommandsDir(cwd?: string): string {
+  return path.join(cwd || process.cwd(), ".claude", "commands");
 }
 
 function getPluginCommandsDirs(): string[] {
@@ -157,10 +157,12 @@ function scanDirectory(
   return skills;
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    // Accept optional cwd query param for project-level skills
+    const cwd = request.nextUrl.searchParams.get("cwd") || undefined;
     const globalSkills = scanDirectory(getGlobalCommandsDir(), "global");
-    const projectSkills = scanDirectory(getProjectCommandsDir(), "project");
+    const projectSkills = scanDirectory(getProjectCommandsDir(cwd), "project");
     const installedSkills = scanInstalledSkills();
 
     // Scan installed plugin skills
