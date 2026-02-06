@@ -8,7 +8,8 @@ export async function GET() {
     const response: SessionsResponse = { sessions };
     return Response.json(response);
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to fetch sessions';
+    const message = error instanceof Error ? error.stack || error.message : String(error);
+    console.error('[GET /api/chat/sessions] Error:', message);
     return Response.json({ error: message }, { status: 500 });
   }
 }
@@ -26,7 +27,8 @@ export async function POST(request: NextRequest) {
     const response: SessionResponse = { session };
     return Response.json(response, { status: 201 });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to create session';
+    const message = error instanceof Error ? error.stack || error.message : String(error);
+    console.error('[POST /api/chat/sessions] Error:', message);
     return Response.json({ error: message }, { status: 500 });
   }
 }

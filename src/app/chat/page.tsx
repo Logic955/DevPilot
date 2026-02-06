@@ -111,7 +111,10 @@ export default function NewChatPage() {
           body: JSON.stringify(createBody),
         });
 
-        if (!createRes.ok) throw new Error('Failed to create session');
+        if (!createRes.ok) {
+          const errBody = await createRes.json().catch(() => ({}));
+          throw new Error(errBody.error || `Failed to create session (${createRes.status})`);
+        }
 
         const { session }: SessionResponse = await createRes.json();
         sessionId = session.id;
