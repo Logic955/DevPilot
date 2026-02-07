@@ -1,4 +1,5 @@
-# CodePilot
+<img src="docs/icon-readme.png" width="32" height="32" alt="CodePilot" style="vertical-align: middle; margin-right: 8px;" /> CodePilot
+===
 
 **A native desktop GUI for Claude Code** -- chat, code, and manage projects through a polished visual interface instead of the terminal.
 
