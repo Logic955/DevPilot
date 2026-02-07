@@ -18,6 +18,10 @@ const isDev = !app.isPackaged;
  * and won't include vars from .zshrc/.bashrc (e.g. API keys).
  */
 function loadUserShellEnv(): Record<string, string> {
+  // Only macOS needs login-shell env loading; Windows/Linux GUI apps inherit full env
+  if (process.platform !== 'darwin') {
+    return {};
+  }
   try {
     const shell = process.env.SHELL || '/bin/zsh';
     const result = execFileSync(shell, ['-ilc', 'env'], {
@@ -106,12 +110,32 @@ function startServer(port: number): ChildProcess {
   serverErrors = [];
 
   const home = os.homedir();
-  const basePath = `/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin`;
   const shellPath = userShellEnv.PATH || process.env.PATH || '';
+  const sep = path.delimiter; // ';' on Windows, ':' on Unix
+
+  let constructedPath: string;
+  if (process.platform === 'win32') {
+    const appData = process.env.APPDATA || path.join(home, 'AppData', 'Roaming');
+    const localAppData = process.env.LOCALAPPDATA || path.join(home, 'AppData', 'Local');
+    const winExtra = [
+      path.join(appData, 'npm'),
+      path.join(localAppData, 'npm'),
+      path.join(home, '.npm-global', 'bin'),
+      path.join(home, '.local', 'bin'),
+      path.join(home, '.claude', 'bin'),
+    ];
+    const allParts = [shellPath, ...winExtra].join(sep).split(sep).filter(Boolean);
+    constructedPath = [...new Set(allParts)].join(sep);
+  } else {
+    const basePath = `/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin`;
+    const raw = `${basePath}:${home}/.npm-global/bin:${home}/.local/bin:${home}/.claude/bin:${shellPath}`;
+    const allParts = raw.split(':').filter(Boolean);
+    constructedPath = [...new Set(allParts)].join(':');
+  }
 
   const env: Record<string, string> = {
     ...userShellEnv,
-    ...process.env as Record<string, string>,
+    ...(process.env as Record<string, string>),
     // Ensure user shell env vars override (especially API keys)
     ...userShellEnv,
     PORT: String(port),
@@ -119,17 +143,28 @@ function startServer(port: number): ChildProcess {
     CLAUDE_GUI_DATA_DIR: path.join(home, '.codepilot'),
     ELECTRON_RUN_AS_NODE: '1',
     HOME: home,
-    PATH: `${basePath}:${home}/.npm-global/bin:${home}/.local/bin:${home}/.claude/bin:${shellPath}`,
+    USERPROFILE: home,
+    PATH: constructedPath,
   };
 
-  // Spawn via /bin/sh to prevent the Electron binary from appearing
-  // as a separate Dock icon on macOS (even with ELECTRON_RUN_AS_NODE=1,
-  // macOS may show a Dock entry for the Electron Framework binary).
-  const child = spawn('/bin/sh', ['-c', `exec "${nodePath}" "${serverPath}"`], {
-    env,
-    stdio: 'pipe',
-    cwd: standaloneDir,
-  });
+  // On Windows, spawn Node.js directly with windowsHide to prevent console flash.
+  // On macOS, spawn via /bin/sh to prevent the Electron binary from appearing
+  // as a separate Dock icon (even with ELECTRON_RUN_AS_NODE=1).
+  let child: ChildProcess;
+  if (process.platform === 'win32') {
+    child = spawn(nodePath, [serverPath], {
+      env,
+      stdio: 'pipe',
+      cwd: standaloneDir,
+      windowsHide: true,
+    });
+  } else {
+    child = spawn('/bin/sh', ['-c', `exec "${nodePath}" "${serverPath}"`], {
+      env,
+      stdio: 'pipe',
+      cwd: standaloneDir,
+    });
+  }
 
   child.stdout?.on('data', (data: Buffer) => {
     const msg = data.toString().trim();
@@ -155,23 +190,38 @@ function getIconPath(): string {
   if (isDev) {
     return path.join(process.cwd(), 'build', 'icon.png');
   }
+  if (process.platform === 'win32') {
+    return path.join(process.resourcesPath, 'icon.ico');
+  }
   return path.join(process.resourcesPath, 'icon.icns');
 }
 
 function createWindow(port: number) {
-  mainWindow = new BrowserWindow({
+  const windowOptions: Electron.BrowserWindowConstructorOptions = {
     width: 1280,
     height: 860,
     minWidth: 800,
     minHeight: 600,
     icon: getIconPath(),
-    titleBarStyle: 'hiddenInset',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
     },
-  });
+  };
+
+  if (process.platform === 'darwin') {
+    windowOptions.titleBarStyle = 'hiddenInset';
+  } else if (process.platform === 'win32') {
+    windowOptions.titleBarStyle = 'hidden';
+    windowOptions.titleBarOverlay = {
+      color: '#00000000',
+      symbolColor: '#888888',
+      height: 44,
+    };
+  }
+
+  mainWindow = new BrowserWindow(windowOptions);
 
   mainWindow.loadURL(`http://127.0.0.1:${port}`);
 

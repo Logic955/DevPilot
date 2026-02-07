@@ -30,6 +30,9 @@ extraResources:
   - from: public/
     to: standalone/public/
     filter: ["**/*"]
+  - from: build/
+    to: .
+    filter: ["icon.*"]
 asarUnpack:
   - "**/*.node"
   - "**/better-sqlite3/**"
@@ -39,3 +42,14 @@ mac:
   target:
     - target: dmg
       arch: [arm64]
+win:
+  icon: build/icon.ico
+  target:
+    - target: nsis
+      arch: [x64, arm64]
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true

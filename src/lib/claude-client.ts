@@ -15,52 +15,16 @@ import type {
 import type { ClaudeStreamOptions, SSEEvent, TokenUsage, MCPServerConfig, PermissionRequestEvent } from '@/types';
 import { registerPendingPermission } from './permission-registry';
 import { getSetting } from './db';
-import { execFileSync } from 'child_process';
+import { findClaudeBinary, getExpandedPath } from './platform';
 import os from 'os';
-import path from 'path';
 
 let cachedClaudePath: string | null | undefined;
 
 function findClaudePath(): string | undefined {
   if (cachedClaudePath !== undefined) return cachedClaudePath || undefined;
-
-  const home = os.homedir();
-  const candidates = [
-    '/usr/local/bin/claude',
-    '/opt/homebrew/bin/claude',
-    path.join(home, '.npm-global', 'bin', 'claude'),
-    path.join(home, '.local', 'bin', 'claude'),
-    path.join(home, '.claude', 'bin', 'claude'),
-  ];
-
-  for (const p of candidates) {
-    try {
-      execFileSync(p, ['--version'], { timeout: 3000, stdio: 'pipe' });
-      cachedClaudePath = p;
-      return p;
-    } catch {
-      // not found
-    }
-  }
-
-  // Fallback: which claude
-  const extra = ['/usr/local/bin', '/opt/homebrew/bin', '/usr/bin', '/bin',
-    path.join(home, '.npm-global', 'bin'), path.join(home, '.nvm', 'current', 'bin'),
-    path.join(home, '.local', 'bin'), path.join(home, '.claude', 'bin')];
-  const current = (process.env.PATH || '').split(':');
-  for (const p of extra) { if (!current.includes(p)) current.push(p); }
-
-  try {
-    const result = execFileSync('/usr/bin/which', ['claude'], {
-      timeout: 3000, stdio: 'pipe',
-      env: { ...process.env, PATH: current.join(':') },
-    });
-    const found = result.toString().trim();
-    if (found) { cachedClaudePath = found; return found; }
-  } catch { /* not found */ }
-
-  cachedClaudePath = null;
-  return undefined;
+  const found = findClaudeBinary();
+  cachedClaudePath = found ?? null;
+  return found;
 }
 
 /**
@@ -138,10 +102,11 @@ export function streamClaude(options: ClaudeStreamOptions): ReadableStream<strin
         // Then overlay any API config the user set in CodePilot settings (optional).
         const sdkEnv: Record<string, string> = { ...process.env as Record<string, string> };
 
-        // Ensure HOME is explicitly set so Claude Code can find ~/.claude/commands/
-        if (!sdkEnv.HOME) {
-          sdkEnv.HOME = os.homedir();
-        }
+        // Ensure HOME/USERPROFILE are set so Claude Code can find ~/.claude/commands/
+        if (!sdkEnv.HOME) sdkEnv.HOME = os.homedir();
+        if (!sdkEnv.USERPROFILE) sdkEnv.USERPROFILE = os.homedir();
+        // Ensure SDK subprocess has expanded PATH (consistent with Electron mode)
+        sdkEnv.PATH = getExpandedPath();
 
         const appToken = getSetting('anthropic_auth_token');
         const appBaseUrl = getSetting('anthropic_base_url');

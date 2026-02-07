@@ -210,7 +210,7 @@ export function SkillsManager() {
                   </span>
                   {pluginSkills.map((skill) => (
                     <SkillListItem
-                      key={`${skill.source}:${skill.name}`}
+                      key={skill.filePath || `${skill.source}:${skill.name}`}
                       skill={skill}
                       selected={
                         selected?.name === skill.name &&
