@@ -11,6 +11,12 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -23,6 +29,7 @@ interface BrowseResponse {
   current: string;
   parent: string | null;
   directories: FolderEntry[];
+  drives?: string[];
 }
 
 interface FolderPickerProps {
@@ -38,6 +45,7 @@ export function FolderPicker({ open, onOpenChange, onSelect, initialPath }: Fold
   const [directories, setDirectories] = useState<FolderEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [pathInput, setPathInput] = useState('');
+  const [drives, setDrives] = useState<string[]>([]);
 
   const browse = useCallback(async (dir?: string) => {
     setLoading(true);
@@ -52,6 +60,7 @@ export function FolderPicker({ open, onOpenChange, onSelect, initialPath }: Fold
         setParentDir(data.parent);
         setDirectories(data.directories);
         setPathInput(data.current);
+        setDrives(data.drives || []);
       }
     } catch {
       // silently fail
@@ -108,7 +117,7 @@ export function FolderPicker({ open, onOpenChange, onSelect, initialPath }: Fold
 
         {/* Directory browser */}
         <div className="rounded-md border border-border">
-          {/* Current path + go up */}
+          {/* Current path + go up + drive switcher */}
           <div className="flex items-center gap-2 border-b border-border bg-muted/30 px-3 py-2">
             <Button
               variant="ghost"
@@ -119,6 +128,31 @@ export function FolderPicker({ open, onOpenChange, onSelect, initialPath }: Fold
             >
               <HugeiconsIcon icon={ArrowUp01Icon} className="h-4 w-4" />
             </Button>
+            {drives.length > 0 && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-6 px-1.5 text-xs font-mono shrink-0">
+                    {currentDir.charAt(0).toUpperCase()}:
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  {drives.map((drive) => {
+                    const letter = drive.charAt(0).toUpperCase();
+                    const isCurrent = currentDir.toUpperCase().startsWith(letter + ':');
+                    return (
+                      <DropdownMenuItem
+                        key={drive}
+                        className="font-mono text-sm gap-2"
+                        onClick={() => browse(drive)}
+                      >
+                        <span className={isCurrent ? 'font-bold' : ''}>{letter}:</span>
+                        <span className="text-muted-foreground text-xs">{drive}</span>
+                      </DropdownMenuItem>
+                    );
+                  })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
             <span className="truncate text-xs font-mono text-muted-foreground">
               {currentDir}
             </span>

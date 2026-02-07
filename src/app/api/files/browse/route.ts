@@ -4,6 +4,21 @@ import path from 'path';
 import os from 'os';
 import type { ErrorResponse } from '@/types';
 
+function getWindowsDrives(): string[] {
+  if (process.platform !== 'win32') return [];
+  const drives: string[] = [];
+  for (let i = 65; i <= 90; i++) {
+    const drive = String.fromCharCode(i) + ':\\';
+    try {
+      fs.accessSync(drive);
+      drives.push(drive);
+    } catch {
+      // drive not available
+    }
+  }
+  return drives;
+}
+
 // List only directories for folder browsing (no safety restriction since user is choosing where to work)
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -28,10 +43,13 @@ export async function GET(request: NextRequest) {
       }))
       .sort((a, b) => a.name.localeCompare(b.name));
 
+    const drives = getWindowsDrives();
+
     return NextResponse.json({
       current: resolvedDir,
       parent: path.dirname(resolvedDir) !== resolvedDir ? path.dirname(resolvedDir) : null,
       directories,
+      drives,
     });
   } catch {
     return NextResponse.json<ErrorResponse>(
