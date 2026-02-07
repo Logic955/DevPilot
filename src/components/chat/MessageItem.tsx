@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useCallback } from 'react';
 import type { Message, TokenUsage } from '@/types';
 import {
   Message as AIMessage,
@@ -13,6 +14,7 @@ import {
   ToolInput,
   ToolOutput,
 } from '@/components/ai-elements/tool';
+import { CopyIcon, CheckIcon } from 'lucide-react';
 import type { ToolUIPart } from 'ai';
 
 interface MessageItemProps {
@@ -110,6 +112,35 @@ function getToolState(result?: string, isError?: boolean): ToolUIPart['state'] {
   return 'output-available';
 }
 
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // fallback
+    }
+  }, [text]);
+
+  return (
+    <button
+      type="button"
+      onClick={handleCopy}
+      className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs text-muted-foreground/60 hover:text-muted-foreground hover:bg-muted transition-colors"
+      title="Copy"
+    >
+      {copied ? (
+        <CheckIcon className="h-3 w-3 text-green-500" />
+      ) : (
+        <CopyIcon className="h-3 w-3" />
+      )}
+    </button>
+  );
+}
+
 function TokenUsageDisplay({ usage }: { usage: TokenUsage }) {
   const totalTokens = usage.input_tokens + usage.output_tokens;
   const costStr = usage.cost_usd !== undefined && usage.cost_usd !== null
@@ -182,13 +213,12 @@ export function MessageItem({ message }: MessageItemProps) {
         )}
       </MessageContent>
 
-      {/* Footer with timestamp and token usage - outside MessageContent to avoid overflow-hidden clipping */}
-      {!isUser && (
-        <div className="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <span className="text-xs text-muted-foreground/50">{timestamp}</span>
-          {tokenUsage && <TokenUsageDisplay usage={tokenUsage} />}
-        </div>
-      )}
+      {/* Footer with copy, timestamp and token usage */}
+      <div className={`flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${isUser ? 'justify-end' : ''}`}>
+        {!isUser && <span className="text-xs text-muted-foreground/50">{timestamp}</span>}
+        {!isUser && tokenUsage && <TokenUsageDisplay usage={tokenUsage} />}
+        {text && <CopyButton text={text} />}
+      </div>
     </AIMessage>
   );
 }
