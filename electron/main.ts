@@ -116,7 +116,7 @@ function startServer(port: number): ChildProcess {
     ...userShellEnv,
     PORT: String(port),
     HOSTNAME: '127.0.0.1',
-    CLAUDE_GUI_DATA_DIR: app.getPath('userData'),
+    CLAUDE_GUI_DATA_DIR: path.join(home, '.codepilot'),
     ELECTRON_RUN_AS_NODE: '1',
     HOME: home,
     PATH: `${basePath}:${home}/.npm-global/bin:${home}/.local/bin:${home}/.claude/bin:${shellPath}`,

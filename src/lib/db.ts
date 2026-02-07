@@ -3,7 +3,7 @@ import path from 'path';
 import crypto from 'crypto';
 import type { ChatSession, Message, SettingsMap, TaskItem, TaskStatus } from '@/types';
 
-const dataDir = process.env.CLAUDE_GUI_DATA_DIR || path.join(process.cwd(), 'data');
+const dataDir = process.env.CLAUDE_GUI_DATA_DIR || path.join(require('os').homedir(), '.codepilot');
 const DB_PATH = path.join(dataDir, 'codepilot.db');
 
 let db: Database.Database | null = null;
@@ -11,9 +11,40 @@ let db: Database.Database | null = null;
 export function getDb(): Database.Database {
   if (!db) {
     const fs = require('fs');
+    const os = require('os');
     const dir = path.dirname(DB_PATH);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
+    }
+
+    // Migrate from old locations if the new DB doesn't exist yet
+    if (!fs.existsSync(DB_PATH)) {
+      const home = os.homedir();
+      const oldPaths = [
+        // Old Electron userData paths (app.getPath('userData'))
+        path.join(home, 'Library', 'Application Support', 'CodePilot', 'codepilot.db'),
+        path.join(home, 'Library', 'Application Support', 'codepilot', 'codepilot.db'),
+        path.join(home, 'Library', 'Application Support', 'Claude GUI', 'codepilot.db'),
+        // Old dev-mode fallback
+        path.join(process.cwd(), 'data', 'codepilot.db'),
+        // Legacy name
+        path.join(home, 'Library', 'Application Support', 'CodePilot', 'claude-gui.db'),
+        path.join(home, 'Library', 'Application Support', 'codepilot', 'claude-gui.db'),
+      ];
+      for (const oldPath of oldPaths) {
+        if (fs.existsSync(oldPath)) {
+          try {
+            fs.copyFileSync(oldPath, DB_PATH);
+            // Also copy WAL/SHM if they exist
+            if (fs.existsSync(oldPath + '-wal')) fs.copyFileSync(oldPath + '-wal', DB_PATH + '-wal');
+            if (fs.existsSync(oldPath + '-shm')) fs.copyFileSync(oldPath + '-shm', DB_PATH + '-shm');
+            console.log(`[db] Migrated database from ${oldPath}`);
+            break;
+          } catch (err) {
+            console.warn(`[db] Failed to migrate from ${oldPath}:`, err);
+          }
+        }
+      }
     }
 
     db = new Database(DB_PATH);
