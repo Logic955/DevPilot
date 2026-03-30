@@ -306,6 +306,9 @@ const en = {
   'connection.missingGitDesc': 'Claude Code requires Git for Windows to run. Please install it and refresh.',
   'connection.conflict': 'Conflict',
   'connection.conflictWarning': 'Multiple Claude Code installations detected',
+  'connection.active': 'Active',
+  'connection.notDetected': 'Not detected',
+  'connection.notDetectedHint': 'Claude Code CLI not found. Set the binary path in Settings → General.',
   'connection.conflictRemove': 'To remove',
 
   // ── Install wizard ──────────────────────────────────────────
@@ -720,6 +723,8 @@ const en = {
   'settings.claudeHomeDir': 'Claude Home Directory',
   'settings.claudeHomeDirDesc': 'Override the CLAUDE_HOME directory (where Claude stores config, sessions, and credentials). Leave empty to use the default.',
   'settings.claudeHomeDirPlaceholder': 'e.g. /home/user/.claude-internal',
+  'settings.detect': 'Detect',
+  'settings.detectFailed': 'Not found — check the path',
 
   // ── CLI Tools ─────────────────────────────────────────────
   'cliTools.title': 'CLI Tools',

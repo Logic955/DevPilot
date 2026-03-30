@@ -304,6 +304,9 @@ const zh: Record<TranslationKey, string> = {
   'connection.conflict': '版本冲突',
   'connection.conflictWarning': '检测到多个 Claude Code 安装',
   'connection.conflictRemove': '卸载方式',
+  'connection.active': '已激活',
+  'connection.notDetected': '未检测到',
+  'connection.notDetectedHint': '未找到 Claude Code CLI，请在 设置 → 通用 中配置可执行文件路径。',
 
   // ── Install wizard ──────────────────────────────────────────
   'install.title': '安装 Claude Code',
@@ -716,6 +719,8 @@ const zh: Record<TranslationKey, string> = {
   'settings.claudeHomeDir': 'Claude 主目录',
   'settings.claudeHomeDirDesc': '覆盖 CLAUDE_HOME 目录（Claude 存储配置、会话和凭证的位置）。留空则使用默认值。',
   'settings.claudeHomeDirPlaceholder': '例：/home/user/.claude-internal',
+  'settings.detect': '检测',
+  'settings.detectFailed': '未找到，请检查路径',
 
   // ── CLI Tools ─────────────────────────────────────────────
   'cliTools.title': 'CLI 工具',

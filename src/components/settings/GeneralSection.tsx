@@ -14,7 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ArrowClockwise, SpinnerGap, FloppyDisk } from "@/components/ui/icon";
+import { ArrowClockwise, SpinnerGap, FloppyDisk, CheckCircle, XCircle } from "@/components/ui/icon";
 import { useUpdate } from "@/hooks/useUpdate";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useAccountInfo } from "@/hooks/useAccountInfo";
@@ -133,6 +133,8 @@ export function GeneralSection() {
   const [claudeHomeDir, setClaudeHomeDir] = useState("");
   const [pathSaving, setPathSaving] = useState(false);
   const [pathSaveSuccess, setPathSaveSuccess] = useState(false);
+  const [detecting, setDetecting] = useState(false);
+  const [detectResult, setDetectResult] = useState<{ ok: boolean; msg: string } | null>(null);
   const { accountInfo } = useAccountInfo();
   const { t, locale, setLocale } = useTranslation();
 
@@ -206,8 +208,33 @@ export function GeneralSection() {
     }
   };
 
+  const detectCLI = async () => {
+    setDetecting(true);
+    setDetectResult(null);
+    try {
+      const params = claudeBinaryPath.trim()
+        ? `?customPath=${encodeURIComponent(claudeBinaryPath.trim())}`
+        : '';
+      const res = await fetch(`/api/claude-status${params}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.connected && data.version) {
+          setDetectResult({ ok: true, msg: `v${data.version}` });
+        } else {
+          setDetectResult({ ok: false, msg: t('settings.detectFailed') });
+        }
+      } else {
+        setDetectResult({ ok: false, msg: t('settings.detectFailed') });
+      }
+    } catch {
+      setDetectResult({ ok: false, msg: t('settings.detectFailed') });
+    } finally {
+      setDetecting(false);
+    }
+  };
+
   const saveClaudePaths = async () => {
-    setPathSaving(true);
+    setDetectResult(null);
     try {
       const res = await fetch("/api/settings/app", {
         method: "PUT",
@@ -312,12 +339,32 @@ export function GeneralSection() {
           <div className="space-y-1.5">
             <label className="text-sm font-medium">{t('settings.claudeBinaryPath')}</label>
             <p className="text-xs text-muted-foreground">{t('settings.claudeBinaryPathDesc')}</p>
-            <Input
-              value={claudeBinaryPath}
-              onChange={(e) => setClaudeBinaryPath(e.target.value)}
-              placeholder={t('settings.claudeBinaryPathPlaceholder')}
-              className="font-mono text-sm"
-            />
+            <div className="flex gap-2">
+              <Input
+                value={claudeBinaryPath}
+                onChange={(e) => { setClaudeBinaryPath(e.target.value); setDetectResult(null); }}
+                placeholder={t('settings.claudeBinaryPathPlaceholder')}
+                className="font-mono text-sm"
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={detectCLI}
+                disabled={detecting}
+                className="shrink-0 gap-1.5"
+              >
+                {detecting ? <SpinnerGap size={13} className="animate-spin" /> : null}
+                {t('settings.detect')}
+              </Button>
+            </div>
+            {detectResult && (
+              <p className={`flex items-center gap-1.5 text-xs ${detectResult.ok ? 'text-status-success-foreground' : 'text-status-error-foreground'}`}>
+                {detectResult.ok
+                  ? <CheckCircle size={13} weight="fill" />
+                  : <XCircle size={13} weight="fill" />}
+                {detectResult.msg}
+              </p>
+            )}
           </div>
           <div className="space-y-1.5 border-t border-border/30 pt-4">
             <label className="text-sm font-medium">{t('settings.claudeHomeDir')}</label>

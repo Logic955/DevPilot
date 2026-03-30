@@ -365,7 +365,10 @@ export async function getClaudeVersion(claudePath: string): Promise<string | nul
       env: { ...process.env, PATH: getExpandedPath() },
       shell: needsShell(claudePath),
     });
-    return stdout.trim() || null;
+    // Take only the first line and extract a semver-like token (e.g. "1.2.3")
+    const firstLine = stdout.trim().split('\n')[0].trim();
+    const match = firstLine.match(/(\d+\.\d+[\.\d]*)/);
+    return match ? match[1] : (firstLine.slice(0, 40) || null);
   } catch {
     return null;
   }

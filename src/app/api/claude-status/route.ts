@@ -23,11 +23,14 @@ function versionGte(a: string, b: string): boolean {
   return true;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    // Prefer user-configured custom binary path from DB settings
-    const customPath = getSetting('claude_binary_path');
-    const claudePath = findClaudeBinary(customPath?.trim() || undefined);
+    // Allow ?customPath= override for ad-hoc validation (settings page "Detect" button)
+    const { searchParams } = new URL(request.url);
+    const queryPath = searchParams.get('customPath')?.trim() || undefined;
+    // Prefer query param > DB setting > auto-detect
+    const customPath = queryPath ?? getSetting('claude_binary_path')?.trim() ?? undefined;
+    const claudePath = findClaudeBinary(customPath || undefined);
 
     // On Windows, check for Git Bash (bash.exe) using the same detection as the SDK runtime.
     // This avoids false negatives when Git is installed but git.exe isn't on PATH.
