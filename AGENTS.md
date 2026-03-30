@@ -22,7 +22,7 @@ CodePilot — Codex 的桌面 GUI 客户端，基于 Electron + Next.js。
 - 新增功能前必须充分调研相关技术方案、API 兼容性、社区最佳实践
 - 涉及 Electron API 需确认目标版本支持情况
 - 涉及第三方库需确认与现有依赖的兼容性
-- 涉及 Codex SDK 需确认 SDK 实际支持的功能和调用方式
+- 涉及 Claude Code SDK 需确认 SDK 实际支持的功能和调用方式
 - 对不确定的技术点先做 POC 验证，不要直接在主代码中试错
 
 **Worktree 隔离规则：**

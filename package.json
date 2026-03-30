@@ -1,5 +1,5 @@
 {
-  "name": "codepilot",
+  "name": "devpilot",
   "version": "0.39.0",
   "private": true,
   "license": "BUSL-1.1",
@@ -9,9 +9,9 @@
   ],
   "author": {
     "name": "op7418",
-    "email": "7418@openclaw.ai"
+    "email": "op7418@users.noreply.github.com"
   },
-  "description": "A native desktop GUI client for Claude Code",
+  "description": "A native desktop development tool",
   "main": "dist-electron/main.js",
   "scripts": {
     "postinstall": "npm rebuild better-sqlite3",

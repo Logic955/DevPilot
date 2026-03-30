@@ -17,7 +17,7 @@ const eslintConfig = defineConfig([
     // apps/site generated artifacts
     "apps/site/.next/**",
     "apps/site/.source/**",
-    // External reference materials / vendored packages (not part of the main codebase)
+    // External reference materials directory (removed, kept in ignore for safety)
     "资料/**",
   ]),
 

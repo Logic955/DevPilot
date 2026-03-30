@@ -157,7 +157,7 @@ function checkNativeModuleABI(): void {
     if (msg.includes('NODE_MODULE_VERSION')) {
       console.error(`[ABI check] ABI mismatch detected: ${msg}`);
       dialog.showErrorBox(
-        'CodePilot - Native Module ABI Mismatch',
+        'DevPilot - Native Module ABI Mismatch',
         `The bundled better-sqlite3 native module was compiled for a different Node.js version.\n\n` +
         `${msg}\n\n` +
         `This usually means the build process did not correctly recompile native modules for Electron.\n` +
@@ -394,7 +394,7 @@ const LOADING_HTML = `data:text/html;charset=utf-8,${encodeURIComponent(`<!DOCTY
 <body>
 <div class="container">
   <div class="spinner"></div>
-  <p>Starting CodePilot...</p>
+  <p>Starting DevPilot...</p>
 </div>
 </body>
 </html>`)}`;
@@ -939,7 +939,7 @@ app.whenReady().then(async () => {
   } catch (err) {
     console.error('Failed to start:', err);
     dialog.showErrorBox(
-      'CodePilot - Failed to Start',
+      'DevPilot - Failed to Start',
       `The internal server could not start.\n\n${err instanceof Error ? err.message : String(err)}\n\nPlease try restarting the application.`
     );
     app.quit();

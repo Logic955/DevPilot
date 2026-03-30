@@ -28,7 +28,7 @@ src/lib/constants/          → 纯数据常量，不引用 UI 层
 | 禁止直接引用 Phosphor | warn | 业务组件 + hooks | 应从 `@/components/ui/icon` 导入 |
 | 组件文件行数上限 500 | warn | `src/components/**`（排除 ui/、ai-elements/） | `skipBlankLines + skipComments` |
 | Patterns 层隔离 | error | `src/components/patterns/**` | 禁止导入 `@/hooks/*` 和 `@/lib/*`（允许 `@/lib/utils`） |
-| 外部资料目录排除 | — | `资料/**` | 不参与主仓 lint |
+| 外部资料目录排除 | — | `资料/**`（已移除） | 历史 lint 排除规则，目录已清理 |
 
 ### 2. 图标统一 (`src/components/ui/icon.tsx`)
 

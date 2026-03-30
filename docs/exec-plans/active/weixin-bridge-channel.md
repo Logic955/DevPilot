@@ -53,44 +53,27 @@ Claude Code 在开工前，必须先通读以下本地资料，再写代码：
 - `src/components/bridge/BridgeSection.tsx`
 - `src/components/bridge/BridgeLayout.tsx`
 
-### 2. OpenClaw 微信插件参考
+### 2. 微信插件协议参考（参考资料已移除）
 
 - `docs/research/weixin-openclaw-plugin-review-2026-03-22.md`
-- `资料/weixin-openclaw-cli/package/cli.mjs`
-- `资料/weixin-openclaw-package/package/index.ts`
-- `资料/weixin-openclaw-package/package/openclaw.plugin.json`
-- `资料/weixin-openclaw-package/package/src/channel.ts`
-- `资料/weixin-openclaw-package/package/src/api/api.ts`
-- `资料/weixin-openclaw-package/package/src/api/types.ts`
-- `资料/weixin-openclaw-package/package/src/auth/login-qr.ts`
-- `资料/weixin-openclaw-package/package/src/auth/accounts.ts`
-- `资料/weixin-openclaw-package/package/src/monitor/monitor.ts`
-- `资料/weixin-openclaw-package/package/src/messaging/inbound.ts`
-- `资料/weixin-openclaw-package/package/src/messaging/process-message.ts`
-- `资料/weixin-openclaw-package/package/src/messaging/send.ts`
-- `资料/weixin-openclaw-package/package/src/messaging/send-media.ts`
-- `资料/weixin-openclaw-package/package/src/cdn/upload.ts`
-- `资料/weixin-openclaw-package/package/src/media/media-download.ts`
-- `资料/weixin-openclaw-package/package/README.zh_CN.md`
+- 原始参考代码包（`@tencent-weixin/openclaw-weixin`）已从项目中移除，相关协议实现细节见上述调研文档。
+- 微信协议的二维码登录、长轮询、消息收发、CDN 媒体加解密等逻辑已按 CodePilot 架构原生重新实现。
 
-### 3. OpenClaw 飞书插件参考
+### 3. 飞书插件组织方式参考（参考资料已移除）
 
-- `资料/feishu-openclaw-plugin/package/index.js`
-- `资料/feishu-openclaw-plugin/package/openclaw.plugin.json`
-- `资料/feishu-openclaw-plugin/package/src/commands/index.js`
-
-飞书插件在本任务中的作用不是“代码复用”，而是“组织方式参考”：诊断命令、onboarding、插件命令入口、能力分层。不要试图把其 OpenClaw runtime 逻辑直接复制进 CodePilot。
+- 原始参考代码包（飞书插件）已从项目中移除。
+- 飞书插件在本任务中的作用不是"代码复用"，而是"组织方式参考"：诊断命令、onboarding、插件命令入口、能力分层。
 
 ## 单次交付约束
 
 - 这次交付必须一次性打通：数据层、适配器层、设置 API、Bridge UI、基础测试、文档。
-- 不允许停在“只接协议 helper”或“只做设置页”。
+- 不允许停在"只接协议 helper"或"只做设置页"。
 - 代码写完后必须执行至少：
   - `npm run test`
   - `npm run test:smoke`
   - 启动 `PORT=3001 npm run dev`
   - 用 CDP 打开 Bridge 页面验证微信设置 UI、账号列表和连接流程界面
-- 若因缺少真实微信账号无法做真人扫码联调，必须在结果里明确说明“已完成代码、自测和模拟验证，但真实扫码登录未实测”，不能假装已经验证过。
+- 若因缺少真实微信账号无法做真人扫码联调，必须在结果里明确说明"已完成代码、自测和模拟验证，但真实扫码登录未实测"，不能假装已经验证过。
 
 ## 总体设计
 
@@ -121,7 +104,7 @@ Claude Code 在开工前，必须先通读以下本地资料，再写代码：
 
 - 复用现有 `channel_bindings` 唯一键 `(channel_type, chat_id)`，无需改表。
 - 同一 `peerUserId` 在不同 bot 账号下会自然落到不同 `chat_session`。
-- `bridge-manager` 和 `channel-router` 无需感知“多账号”概念，只处理普通地址。
+- `bridge-manager` 和 `channel-router` 无需感知"多账号"概念，只处理普通地址。
 
 必须新增一个 helper，例如：
 
@@ -377,7 +360,7 @@ typing ticket 获取逻辑：
 
 - 不实现 `getPreviewCapabilities`
 - 不实现 callback query
-- `permission-broker.ts` 必须把 `weixin` 归类到“无按钮渠道”，与 `qq` 同类
+- `permission-broker.ts` 必须把 `weixin` 归类到"无按钮渠道"，与 `qq` 同类
 - `/perm` 文本审批链路保持可用
 
 ### 7. API 路由设计
@@ -434,7 +417,7 @@ UI 必须包含：
 
 - 微信总开关
 - base URL / CDN base URL 配置
-- “连接微信账号”按钮
+- "连接微信账号"按钮
 - 当前二维码展示区或轮询状态展示
 - 已登录账号列表
 - 每账号 enabled 开关
@@ -457,7 +440,7 @@ UI 必须包含：
 修改 `src/lib/bridge/permission-broker.ts`：
 
 - 当前 `supportsButtons = adapter.channelType !== 'qq'`
-- 必须改成明确把 `weixin` 也归到“无按钮渠道”
+- 必须改成明确把 `weixin` 也归到"无按钮渠道"
 
 例如：
 
@@ -565,7 +548,7 @@ UI 必须包含：
 - 打开 Bridge 页面
 - 验证微信 section 可进入
 - 验证设置保存、刷新后回显
-- 验证“连接账号”按钮打开二维码区域
+- 验证"连接账号"按钮打开二维码区域
 - 验证账号列表启停/删除交互
 - 检查浏览器 console 无报错
 

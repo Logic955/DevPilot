@@ -253,5 +253,5 @@ npm run electron:pack:linux    # Linux AppImage, deb, rpm
 [Business Source License 1.1 (BSL-1.1)](LICENSE)
 
 - **Personal / academic / non-profit use**: free and unrestricted
-- **Commercial use**: requires a separate license — contact 7418@openclaw.ai
+- **Commercial use**: requires a separate license — contact op7418@users.noreply.github.com
 - **Change date**: 2029-03-16 — after which the code converts to Apache 2.0

@@ -12,4 +12,4 @@
 | chat-sdk-integration-feasibility.md | Vercel Chat SDK 集成可行性调研 |
 | context-storage-migration-plan.md | 上下文共享与存储迁移设计（详细方案；执行跟踪见 `docs/exec-plans/active/context-storage-migration.md`） |
 | mobile-remote-control-overall-plan.md | 移动端远程控制整体方案（Host / Controller / Lease / 多设备控制） |
-| weixin-openclaw-plugin-review-2026-03-22.md | OpenClaw 微信插件拆包与 CodePilot 逆向集成可行性调研 |
+| weixin-openclaw-plugin-review-2026-03-22.md | 微信插件拆包与 CodePilot 逆向集成可行性调研（参考资料已移除，结论保留） |
