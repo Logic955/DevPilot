@@ -1,7 +1,7 @@
 /**
  * Provider Resolver — unified provider/model resolution for all consumers.
  *
- * Every entry point (chat, bridge, onboarding, check-in, media plan) calls
+ * Every entry point (chat, onboarding, check-in, media plan) calls
  * this module instead of doing its own provider resolution. This guarantees
  * the same provider+model+protocol+env for the same inputs everywhere.
  */

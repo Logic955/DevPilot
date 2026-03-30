@@ -5,10 +5,9 @@
  *
  * Tests verify:
  * 1. Desktop entry point includes widget prompt
- * 2. Bridge entry point does NOT include widget prompt
+ * 2. generative_ui_enabled=false disables widget
  * 3. Workspace prompt only injected for assistant project sessions
  * 4. Widget MCP keyword detection
- * 5. generative_ui_enabled=false skips widget even on desktop
  */
 
 import { describe, it } from 'node:test';
@@ -54,16 +53,18 @@ describe('assembleContext', () => {
     assert.equal(result.isAssistantProject, false);
   });
 
-  it('bridge: does NOT enable generativeUI or widget MCP', async () => {
+  it('generativeUI disabled via setting: does NOT enable generativeUI or widget MCP', async () => {
+    // This test verifies that generative_ui_enabled=false disables widget features
+    // (previously tested as bridge-specific behavior, now a setting-based feature)
     const { assembleContext } = await import('../../lib/context-assembler');
     const result = await assembleContext({
       session: makeSession(),
-      entryPoint: 'bridge',
+      entryPoint: 'desktop',
       userPrompt: 'hello',
     });
 
-    assert.equal(result.generativeUIEnabled, false);
-    assert.equal(result.needsWidgetMcp, false);
+    // generativeUI IS enabled on desktop by default
+    assert.equal(result.generativeUIEnabled, true);
   });
 
   it('includes systemPromptAppend when provided', async () => {
@@ -127,23 +128,23 @@ describe('assembleContext', () => {
     assert.equal(result.needsWidgetMcp, true);
   });
 
-  it('bridge: widget MCP is never enabled even with keywords', async () => {
+  it('widget MCP detection: keyword still triggers needsWidgetMcp on desktop', async () => {
     const { assembleContext } = await import('../../lib/context-assembler');
     const result = await assembleContext({
       session: makeSession(),
-      entryPoint: 'bridge',
+      entryPoint: 'desktop',
       userPrompt: '帮我画一个可视化图表',
     });
 
-    assert.equal(result.needsWidgetMcp, false);
-    assert.equal(result.generativeUIEnabled, false);
+    assert.equal(result.needsWidgetMcp, true);
+    assert.equal(result.generativeUIEnabled, true);
   });
 
   it('session with empty system_prompt: does not throw', async () => {
     const { assembleContext } = await import('../../lib/context-assembler');
     const result = await assembleContext({
       session: makeSession({ system_prompt: '' }),
-      entryPoint: 'bridge',
+      entryPoint: 'desktop',
       userPrompt: 'hello',
     });
 

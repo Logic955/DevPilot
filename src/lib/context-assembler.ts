@@ -1,13 +1,11 @@
 /**
- * Context Assembler — unified system prompt assembly for all entry points.
+ * Context Assembler — unified system prompt assembly.
  *
  * Extracts the 5-layer prompt assembly logic from route.ts into a pure async
- * function. Both browser chat (route.ts) and bridge (conversation-engine.ts)
- * call this, ensuring consistent context regardless of entry point.
+ * function. Ensures consistent context regardless of call site.
  *
  * Layer injection is controlled by entry point type:
  *   Desktop: workspace + session + assistant instructions + CLI tools + widget
- *   Bridge:  workspace + session + assistant instructions + CLI tools (no widget)
  */
 
 import type { ChatSession, SearchResult } from '@/types';
@@ -19,7 +17,7 @@ export interface ContextAssemblyConfig {
   /** The session from DB */
   session: ChatSession;
   /** Entry point: controls which layers are injected */
-  entryPoint: 'desktop' | 'bridge';
+  entryPoint: 'desktop';
   /** Current user prompt (used for workspace retrieval + widget keyword detection) */
   userPrompt: string;
   /** Per-request system prompt append (e.g., skill injection for image generation) */
@@ -119,19 +117,8 @@ export async function assembleContext(config: ContextAssemblyConfig): Promise<As
     finalSystemPrompt = (finalSystemPrompt || '') + '\n\n' + assistantProjectInstructions;
   }
 
-  // ── Layer 4: CLI tools context (always, both desktop and bridge) ──
-  const t1 = Date.now();
-  try {
-    const { buildCliToolsContext } = await import('@/lib/cli-tools-context');
-    const cliToolsCtx = await buildCliToolsContext();
-    const t2 = Date.now();
-    console.log(`[context-assembler] CLI tools detection: ${t2 - t1}ms`);
-    if (cliToolsCtx) {
-      finalSystemPrompt = (finalSystemPrompt || '') + '\n\n' + cliToolsCtx;
-    }
-  } catch {
-    // CLI tools context injection failed — don't block
-  }
+  // Layer 4 removed — CLI tools capability prompt is now injected in
+  // claude-client.ts only when the MCP server is also mounted (keyword-gated).
 
   // ── Layer 5: Widget system prompt (desktop only) ──────────────────
   const generativeUISetting = getSetting('generative_ui_enabled');
@@ -153,6 +140,22 @@ export async function assembleContext(config: ContextAssemblyConfig): Promise<As
     if (widgetKeywords.test(userPrompt)) needsWidgetMcp = true;
     else if (conversationHistory?.some(m => m.content.includes('show-widget'))) needsWidgetMcp = true;
     else if (imageAgentMode) needsWidgetMcp = true;
+  }
+
+  // ── Layer 6: Dashboard context (desktop only) ─────────────────────
+  // Inject compact summary of pinned widgets so the AI knows what's on the dashboard.
+  if (entryPoint === 'desktop' && session.working_directory) {
+    try {
+      const { readDashboard } = await import('@/lib/dashboard-store');
+      const config = readDashboard(session.working_directory);
+      if (config.widgets.length > 0) {
+        const summary = config.widgets.map((w, i) => `${i + 1}. ${w.title} — ${w.dataContract}`).join('\n');
+        const trimmed = summary.length > 500 ? summary.slice(0, 500) + '...' : summary;
+        finalSystemPrompt = (finalSystemPrompt || '') + `\n\n<active-dashboard>\nThe user has ${config.widgets.length} widget(s) pinned to their project dashboard:\n${trimmed}\n</active-dashboard>`;
+      }
+    } catch {
+      // Dashboard read failed — don't block
+    }
   }
 
   console.log(`[context-assembler] total: ${Date.now() - t0}ms (entry=${entryPoint}, prompt=${finalSystemPrompt?.length ?? 0} chars)`);

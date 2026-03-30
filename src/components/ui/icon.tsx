@@ -41,6 +41,7 @@ export {
   Folder,
   FolderMinus,
   FolderOpen,
+  FolderPlus,
   Funnel,
   GameController,
   Gear,
@@ -63,6 +64,7 @@ export {
   PaintBrush,
   PencilLine,
   PencilSimple,
+  Play,
   Plug,
   Plus,
   Question,
@@ -71,6 +73,7 @@ export {
   SortDescending,
   Sparkle,
   SpinnerGap,
+  Star,
   Stethoscope,
   Stop,
   Storefront,
@@ -89,6 +92,7 @@ export {
   GitCommit,
   CloudArrowUp,
   ArrowsInLineVertical,
+  PushPin,
 } from "@phosphor-icons/react";
 
 export type { Icon, IconProps } from "@phosphor-icons/react";

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { NavRail } from "./NavRail";
+// NavRail removed — navigation merged into ChatListPanel
 import { ChatListPanel } from "./ChatListPanel";
 import { ResizeHandle } from "./ResizeHandle";
 import { UpdateDialog } from "./UpdateDialog";
@@ -125,9 +125,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  // Panel state — chatListOpen is derived: raw state gated by route
+  // Panel state — chatListOpen is no longer gated by route (sidebar always visible)
   const isChatRoute = pathname.startsWith("/chat/") || pathname === "/chat";
-  const chatListOpen = chatListOpenRaw && isChatRoute;
+  const chatListOpen = chatListOpenRaw;
 
   const setChatListOpen = useCallback((open: boolean) => {
     setChatListOpenRaw(open);
@@ -138,6 +138,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [gitPanelOpen, setGitPanelOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [terminalOpen, setTerminalOpen] = useState(false);
+  const [dashboardPanelOpen, setDashboardPanelOpen] = useState(false);
 
   // --- Git summary (derived from polling hook, no setState needed) ---
   const [currentWorktreeLabel, setCurrentWorktreeLabel] = useState("");
@@ -381,6 +382,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       setPreviewOpen,
       terminalOpen,
       setTerminalOpen,
+      dashboardPanelOpen,
+      setDashboardPanelOpen,
       currentBranch,
       gitDirtyCount,
       currentWorktreeLabel,
@@ -402,7 +405,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       previewViewMode,
       setPreviewViewMode,
     }),
-    [fileTreeOpen, gitPanelOpen, previewOpen, terminalOpen, currentBranch, gitDirtyCount, currentWorktreeLabel, workingDirectory, sessionId, sessionTitle, streamingSessionId, pendingApprovalSessionId, activeStreamingSessions, pendingApprovalSessionIds, previewFile, setPreviewFile, previewViewMode]
+    [fileTreeOpen, gitPanelOpen, previewOpen, terminalOpen, dashboardPanelOpen, currentBranch, gitDirtyCount, currentWorktreeLabel, workingDirectory, sessionId, sessionTitle, streamingSessionId, pendingApprovalSessionId, activeStreamingSessions, pendingApprovalSessionIds, previewFile, setPreviewFile, previewViewMode]
   );
 
   const imageGenValue = useImageGenState();
@@ -416,15 +419,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <BatchImageGenContext.Provider value={batchImageGenValue}>
         <TooltipProvider delayDuration={300}>
           <div className="flex h-screen overflow-hidden">
-            <NavRail
-              chatListOpen={chatListOpen}
-              onToggleChatList={() => setChatListOpen(!chatListOpen)}
-              hasUpdate={updateContextValue.updateInfo?.updateAvailable ?? false}
-              readyToInstall={updateContextValue.updateInfo?.readyToInstall ?? false}
-              skipPermissionsActive={skipPermissionsActive}
-            />
             <ErrorBoundary>
-              <ChatListPanel open={chatListOpen} width={chatListWidth} />
+              <ChatListPanel
+                open={chatListOpen}
+                width={chatListWidth}
+                hasUpdate={updateContextValue.updateInfo?.updateAvailable ?? false}
+                readyToInstall={updateContextValue.updateInfo?.readyToInstall ?? false}
+              />
             </ErrorBoundary>
             {chatListOpen && (
               <ResizeHandle side="left" onResize={handleChatListResize} onResizeEnd={handleChatListResizeEnd} />

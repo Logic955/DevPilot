@@ -77,9 +77,6 @@ interface ElectronAPI {
   };
   install: ElectronInstallAPI;
   updater?: ElectronUpdaterAPI;
-  bridge?: {
-    isActive: () => Promise<boolean>;
-  };
   terminal?: ElectronTerminalAPI;
 }
 

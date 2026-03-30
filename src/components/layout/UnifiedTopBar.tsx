@@ -7,6 +7,7 @@ import {
   TreeStructure,
   PencilSimple,
   DotOutline,
+  ChartBar,
 } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +31,8 @@ export function UnifiedTopBar() {
     setFileTreeOpen,
     gitPanelOpen,
     setGitPanelOpen,
+    dashboardPanelOpen,
+    setDashboardPanelOpen,
     currentBranch,
     gitDirtyCount,
   } = usePanel();
@@ -90,6 +93,17 @@ export function UnifiedTopBar() {
 
   // Extract project name from working directory
   const projectName = workingDirectory ? workingDirectory.split(/[\\/]/).filter(Boolean).pop() || '' : '';
+
+  // On non-chat routes, render only a thin drag region (no visible bar)
+  if (!isChatRoute) {
+    // Thin drag region for macOS window dragging — just enough for traffic light area
+    return (
+      <div
+        className="h-3 shrink-0"
+        style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
+      />
+    );
+  }
 
   return (
     <>
@@ -213,6 +227,21 @@ export function UnifiedTopBar() {
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="bottom">{t('topBar.fileTree')}</TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={dashboardPanelOpen ? "secondary" : "ghost"}
+                    size="icon-sm"
+                    className={dashboardPanelOpen ? "" : "text-muted-foreground hover:text-foreground"}
+                    onClick={() => setDashboardPanelOpen(!dashboardPanelOpen)}
+                  >
+                    <ChartBar size={16} />
+                    <span className="sr-only">{t('topBar.dashboard')}</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">{t('topBar.dashboard')}</TooltipContent>
               </Tooltip>
             </>
           )}
