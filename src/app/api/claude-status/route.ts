@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { findClaudeBinary, getClaudeVersion, findAllClaudeBinaries, classifyClaudePath, isWindows, findGitBash } from '@/lib/platform';
+import { getSetting } from '@/lib/db';
 import type { ClaudeInstallInfo } from '@/lib/platform';
 
 /** Minimum CLI versions for optional features */
@@ -24,7 +25,9 @@ function versionGte(a: string, b: string): boolean {
 
 export async function GET() {
   try {
-    const claudePath = findClaudeBinary();
+    // Prefer user-configured custom binary path from DB settings
+    const customPath = getSetting('claude_binary_path');
+    const claudePath = findClaudeBinary(customPath?.trim() || undefined);
 
     // On Windows, check for Git Bash (bash.exe) using the same detection as the SDK runtime.
     // This avoids false negatives when Git is installed but git.exe isn't on PATH.

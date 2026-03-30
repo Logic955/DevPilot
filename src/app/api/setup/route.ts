@@ -8,6 +8,9 @@ export async function GET() {
     const completedRaw = getSetting('setup_completed');
     const completed = completedRaw === 'true';
 
+    // Resolve custom CLI path from settings (used for all binary checks below)
+    const customBinaryPath = getSetting('claude_binary_path')?.trim() || undefined;
+
     // Claude status
     let claude: 'not-configured' | 'completed' | 'skipped' | 'needs-fix' = 'not-configured';
     const claudeSkipped = getSetting('setup_claude_skipped');
@@ -15,7 +18,7 @@ export async function GET() {
       claude = 'skipped';
     } else {
       try {
-        const binary = findClaudeBinary();
+        const binary = findClaudeBinary(customBinaryPath);
         claude = binary ? 'completed' : 'not-configured';
       } catch {
         claude = 'not-configured';
@@ -35,10 +38,8 @@ export async function GET() {
         provider = 'completed';
       } else {
         // Check if Claude Code CLI is available — it acts as a provider via SDK proxy
-        // (the built-in 'env' provider in /api/providers/models always lists Claude Code,
-        // so we must recognise the CLI as a valid provider to keep the UI consistent)
         try {
-          const binary = findClaudeBinary();
+          const binary = findClaudeBinary(customBinaryPath);
           if (binary) {
             provider = 'completed';
           }

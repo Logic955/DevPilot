@@ -101,8 +101,9 @@ async function runCliProbe(): Promise<ProbeResult> {
   const findings: Finding[] = [];
   const start = Date.now();
 
-  // Check primary binary
-  const bin = findClaudeBinary();
+  // Check primary binary (prefer user-configured custom path)
+  const customBinaryPath = getSetting('claude_binary_path')?.trim() || undefined;
+  const bin = findClaudeBinary(customBinaryPath);
   if (!bin) {
     findings.push({
       severity: 'error',
@@ -723,7 +724,8 @@ async function runLiveProbe(): Promise<ProbeResult> {
   }
 
   // 3. Skip if no CLI binary
-  const claudePath = findClaudeBinary();
+  const customBinaryPathForLive = getSetting('claude_binary_path')?.trim() || undefined;
+  const claudePath = findClaudeBinary(customBinaryPathForLive);
   if (!claudePath) {
     findings.push({
       severity: 'warn',

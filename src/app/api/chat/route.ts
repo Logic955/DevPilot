@@ -2,7 +2,6 @@ import { NextRequest } from 'next/server';
 import { streamClaude } from '@/lib/claude-client';
 import { addMessage, getMessages, getSession, updateSessionTitle, updateSdkSessionId, updateSessionModel, updateSessionProvider, updateSessionProviderId, getSetting, acquireSessionLock, renewSessionLock, releaseSessionLock, setSessionRuntimeStatus, syncSdkTasks } from '@/lib/db';
 import { resolveProvider as resolveProviderUnified } from '@/lib/provider-resolver';
-import { notifySessionStart, notifySessionComplete, notifySessionError } from '@/lib/telegram-bot';
 import { extractCompletion } from '@/lib/onboarding-completion';
 import { loadCodePilotMcpServers } from '@/lib/mcp-loader';
 import { assembleContext } from '@/lib/context-assembler';
@@ -53,14 +52,6 @@ export async function POST(request: NextRequest) {
     activeSessionId = session_id;
     activeLockId = lockId;
     setSessionRuntimeStatus(session_id, 'running');
-
-    // Telegram notification: session started (fire-and-forget)
-    const telegramNotifyOpts = {
-      sessionId: session_id,
-      sessionTitle: session.title !== 'New Chat' ? session.title : content.slice(0, 50),
-      workingDirectory: session.working_directory,
-    };
-    notifySessionStart(telegramNotifyOpts).catch(() => {});
 
     // Save user message — persist file metadata so attachments survive page reload
     // Skip saving for autoTrigger messages (invisible system triggers for assistant hooks)
@@ -230,7 +221,7 @@ export async function POST(request: NextRequest) {
     }, 60_000);
 
     // Save assistant message in background, with cleanup callback to release lock
-    collectStreamResponse(streamForCollect, session_id, telegramNotifyOpts, () => {
+    collectStreamResponse(streamForCollect, session_id, () => {
       clearInterval(lockRenewalInterval);
       releaseSessionLock(session_id, lockId);
       setSessionRuntimeStatus(session_id, 'idle');
@@ -263,7 +254,6 @@ export async function POST(request: NextRequest) {
 async function collectStreamResponse(
   stream: ReadableStream<string>,
   sessionId: string,
-  telegramOpts: { sessionId?: string; sessionTitle?: string; workingDirectory?: string },
   onComplete?: () => void,
 ) {
   const reader = stream.getReader();
@@ -455,17 +445,9 @@ async function collectStreamResponse(
       console.error('[chat API] Server-side completion detection failed:', e);
     }
 
-    // Telegram notifications: completion or error (fire-and-forget)
+    // Notifications: completion or error (fire-and-forget)
     if (hasError) {
-      notifySessionError(errorMessage, telegramOpts).catch(() => {});
-    } else {
-      // Extract text summary for the completion notification
-      const textSummary = contentBlocks
-        .filter((b): b is Extract<MessageContentBlock, { type: 'text' }> => b.type === 'text')
-        .map((b) => b.text)
-        .join('')
-        .trim();
-      notifySessionComplete(textSummary || undefined, telegramOpts).catch(() => {});
+      // error already logged above
     }
     onComplete?.();
   }

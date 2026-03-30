@@ -8,7 +8,6 @@ import {
   Plug,
   Image,
   Gear,
-  WifiHigh,
   Terminal,
 } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
@@ -36,7 +35,6 @@ const navItems = [
   { href: "/mcp", label: "MCP", icon: Plug },
   { href: "/cli-tools", label: "CLI Tools", icon: Terminal },
   { href: "/gallery", label: "Gallery", icon: Image },
-  { href: "/bridge", label: "Bridge", icon: WifiHigh },
 ] as const;
 
 export function NavRail({ onToggleChatList, hasUpdate, readyToInstall, skipPermissionsActive }: NavRailProps) {
@@ -48,7 +46,6 @@ export function NavRail({ onToggleChatList, hasUpdate, readyToInstall, skipPermi
     'Skills': 'extensions.skills',
     'MCP': 'extensions.mcpServers',
     'Gallery': 'gallery.title',
-    'Bridge': 'nav.bridge',
     'CLI Tools': 'nav.cliTools',
   };
   const isChatRoute = pathname === "/chat" || pathname.startsWith("/chat/");

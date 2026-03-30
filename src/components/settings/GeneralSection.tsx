@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import {
   AlertDialog,
@@ -13,7 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ArrowClockwise, SpinnerGap } from "@/components/ui/icon";
+import { ArrowClockwise, SpinnerGap, FloppyDisk } from "@/components/ui/icon";
 import { useUpdate } from "@/hooks/useUpdate";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useAccountInfo } from "@/hooks/useAccountInfo";
@@ -128,6 +129,10 @@ export function GeneralSection() {
   const [skipPermSaving, setSkipPermSaving] = useState(false);
   const [generativeUI, setGenerativeUI] = useState(true);
   const [generativeUISaving, setGenerativeUISaving] = useState(false);
+  const [claudeBinaryPath, setClaudeBinaryPath] = useState("");
+  const [claudeHomeDir, setClaudeHomeDir] = useState("");
+  const [pathSaving, setPathSaving] = useState(false);
+  const [pathSaveSuccess, setPathSaveSuccess] = useState(false);
   const { accountInfo } = useAccountInfo();
   const { t, locale, setLocale } = useTranslation();
 
@@ -140,6 +145,8 @@ export function GeneralSection() {
         setSkipPermissions(appSettings.dangerously_skip_permissions === "true");
         // generative_ui_enabled defaults to true when not set
         setGenerativeUI(appSettings.generative_ui_enabled !== "false");
+        setClaudeBinaryPath(appSettings.claude_binary_path || "");
+        setClaudeHomeDir(appSettings.claude_home_dir || "");
       }
     } catch {
       // ignore
@@ -196,6 +203,30 @@ export function GeneralSection() {
       // ignore
     } finally {
       setGenerativeUISaving(false);
+    }
+  };
+
+  const saveClaudePaths = async () => {
+    setPathSaving(true);
+    try {
+      const res = await fetch("/api/settings/app", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          settings: {
+            claude_binary_path: claudeBinaryPath,
+            claude_home_dir: claudeHomeDir,
+          },
+        }),
+      });
+      if (res.ok) {
+        setPathSaveSuccess(true);
+        setTimeout(() => setPathSaveSuccess(false), 2000);
+      }
+    } catch {
+      // ignore
+    } finally {
+      setPathSaving(false);
     }
   };
 
@@ -270,6 +301,48 @@ export function GeneralSection() {
           </Button>
         </FieldRow>
 
+      </SettingsCard>
+
+      {/* Claude CLI Configuration */}
+      <SettingsCard
+        title={t('settings.claudeCliTitle')}
+        description={t('settings.claudeCliDesc')}
+      >
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium">{t('settings.claudeBinaryPath')}</label>
+            <p className="text-xs text-muted-foreground">{t('settings.claudeBinaryPathDesc')}</p>
+            <Input
+              value={claudeBinaryPath}
+              onChange={(e) => setClaudeBinaryPath(e.target.value)}
+              placeholder={t('settings.claudeBinaryPathPlaceholder')}
+              className="font-mono text-sm"
+            />
+          </div>
+          <div className="space-y-1.5 border-t border-border/30 pt-4">
+            <label className="text-sm font-medium">{t('settings.claudeHomeDir')}</label>
+            <p className="text-xs text-muted-foreground">{t('settings.claudeHomeDirDesc')}</p>
+            <Input
+              value={claudeHomeDir}
+              onChange={(e) => setClaudeHomeDir(e.target.value)}
+              placeholder={t('settings.claudeHomeDirPlaceholder')}
+              className="font-mono text-sm"
+            />
+          </div>
+          <div className="flex items-center gap-3 border-t border-border/30 pt-4">
+            <Button onClick={saveClaudePaths} disabled={pathSaving} size="sm" className="gap-2">
+              {pathSaving ? (
+                <SpinnerGap size={14} className="animate-spin" />
+              ) : (
+                <FloppyDisk size={14} />
+              )}
+              {pathSaving ? t('provider.saving') : t('common.save')}
+            </Button>
+            {pathSaveSuccess && (
+              <span className="text-sm text-status-success-foreground">{t('settings.saved')}</span>
+            )}
+          </div>
+        </div>
       </SettingsCard>
 
       {/* Appearance */}

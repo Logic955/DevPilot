@@ -271,9 +271,25 @@ export function invalidateClaudePathCache(): void {
 
 /**
  * Find and validate the Claude CLI binary.
+ * If customPath is provided, it is validated and returned directly (bypasses cache).
  * Positive results are cached for 60s; negative results are never cached.
  */
-export function findClaudeBinary(): string | undefined {
+export function findClaudeBinary(customPath?: string): string | undefined {
+  // If user provided a custom path, validate and use it directly
+  if (customPath && customPath.trim()) {
+    const p = customPath.trim();
+    try {
+      execFileSync(p, ['--version'], {
+        timeout: 3000,
+        stdio: 'pipe',
+        shell: needsShell(p),
+      });
+      return p;
+    } catch {
+      // Custom path doesn't work, fall through to auto-detect
+    }
+  }
+
   const now = Date.now();
   if (_cachedBinaryPath !== null && now - _cachedBinaryTimestamp < BINARY_CACHE_TTL) {
     return _cachedBinaryPath;

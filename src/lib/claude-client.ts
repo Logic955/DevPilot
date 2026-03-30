@@ -21,7 +21,6 @@ import { captureCapabilities, isCacheFresh, setCachedPlugins } from './agent-sdk
 import { getSetting, updateSdkSessionId, createPermissionRequest } from './db';
 import { resolveForClaudeCode, toClaudeCodeEnv } from './provider-resolver';
 import { findClaudeBinary, findGitBash, getExpandedPath, invalidateClaudePathCache } from './platform';
-import { notifyPermissionRequest, notifyGeneric } from './telegram-bot';
 import { classifyError, formatClassifiedError } from './error-classifier';
 import { resolveWorkingDirectory } from './working-directory';
 import os from 'os';
@@ -91,6 +90,11 @@ function resolveScriptFromCmd(cmdPath: string): string | undefined {
 let cachedClaudePath: string | null | undefined;
 
 function findClaudePath(): string | undefined {
+  // Always check DB for custom binary path (not cached, so it's always fresh)
+  const customPath = getSetting('claude_binary_path');
+  if (customPath && customPath.trim()) {
+    return findClaudeBinary(customPath.trim());
+  }
   if (cachedClaudePath !== undefined) return cachedClaudePath || undefined;
   const found = findClaudeBinary();
   cachedClaudePath = found ?? null;
@@ -306,6 +310,12 @@ export async function generateTextViaSdk(params: {
   const resolvedEnv = toClaudeCodeEnv(sdkEnv, resolved);
   Object.assign(sdkEnv, resolvedEnv);
 
+  // Apply custom Claude home directory if configured
+  const claudeHomeDir = getSetting('claude_home_dir');
+  if (claudeHomeDir && claudeHomeDir.trim()) {
+    sdkEnv.CLAUDE_HOME = claudeHomeDir.trim();
+  }
+
   const abortController = new AbortController();
   if (params.abortSignal) {
     params.abortSignal.addEventListener('abort', () => abortController.abort());
@@ -450,6 +460,12 @@ export function streamClaude(options: ClaudeStreamOptions): ReadableStream<strin
         // toClaudeCodeEnv returns a full env — merge back into sdkEnv
         // (preserves HOME, USERPROFILE, PATH, Git Bash detection set above)
         Object.assign(sdkEnv, resolvedEnv);
+
+        // Apply custom Claude home directory if configured
+        const claudeHomeDir = getSetting('claude_home_dir');
+        if (claudeHomeDir && claudeHomeDir.trim()) {
+          sdkEnv.CLAUDE_HOME = claudeHomeDir.trim();
+        }
 
         // Warn if no credentials found at all
         if (!resolved.hasCredentials && !sdkEnv.ANTHROPIC_API_KEY && !sdkEnv.ANTHROPIC_AUTH_TOKEN) {
@@ -654,9 +670,6 @@ export function streamClaude(options: ClaudeStreamOptions): ReadableStream<strin
             data: JSON.stringify(permEvent),
           }));
 
-          // Notify via Telegram (fire-and-forget)
-          notifyPermissionRequest(toolName, input as Record<string, unknown>, telegramOpts).catch(() => {});
-
           // Notify runtime status change
           onRuntimeStatusChange?.('waiting_permission');
 
@@ -668,13 +681,6 @@ export function streamClaude(options: ClaudeStreamOptions): ReadableStream<strin
           onRuntimeStatusChange?.('running');
 
           return result;
-        };
-
-        // Telegram notification context for hooks
-        const telegramOpts = {
-          sessionId,
-          sessionTitle: undefined as string | undefined,
-          workingDirectory: resolvedWorkingDirectory.path,
         };
 
         // No queryOptions.hooks — all hook types (Notification, PostToolUse) use
@@ -1020,7 +1026,6 @@ export function streamClaude(options: ClaudeStreamOptions): ReadableStream<strin
                       message: taskMsg.summary || '',
                     }),
                   }));
-                  notifyGeneric(title, taskMsg.summary || '', telegramOpts).catch(() => {});
                 }
               }
               break;
@@ -1073,7 +1078,6 @@ export function streamClaude(options: ClaudeStreamOptions): ReadableStream<strin
                   type: 'status',
                   data: JSON.stringify({ notification: true, title: errTitle, message: errMsg }),
                 }));
-                notifyGeneric(errTitle, errMsg, telegramOpts).catch(() => {});
               }
               break;
             }
