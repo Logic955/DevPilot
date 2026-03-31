@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import type { UpdateInfo, UpdateContextValue } from "@/hooks/useUpdate";
 
 const CHECK_INTERVAL = 8 * 60 * 60 * 1000; // 8 hours
-const DISMISSED_VERSION_KEY = "codepilot_dismissed_update_version";
+const DISMISSED_VERSION_KEY = "devpilot_dismissed_update_version";
 
 /**
  * Encapsulates all update-checking logic (native Electron updater + browser fallback).

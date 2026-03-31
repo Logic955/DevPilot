@@ -560,7 +560,7 @@ export function streamClaude(options: ClaudeStreamOptions): ReadableStream<strin
             const widgetServer = createWidgetMcpServer();
             queryOptions.mcpServers = {
               ...(queryOptions.mcpServers || {}),
-              'codepilot-widget': widgetServer,
+              'devpilot-widget': widgetServer,
             };
           }
         }
@@ -571,7 +571,7 @@ export function streamClaude(options: ClaudeStreamOptions): ReadableStream<strin
         // and does NOT need these MCP tools.
         const needsMediaMcp = (() => {
           if (imageAgentMode) return false; // Design Agent uses its own flow
-          const mediaKeywords = /生成图片|画一|图像|图片|素材|保存.*素材|import.*library|save.*library|codepilot_import_media|codepilot_generate_image/i;
+          const mediaKeywords = /生成图片|画一|图像|图片|素材|保存.*素材|import.*library|save.*library|devpilot_import_media|devpilot_generate_image/i;
           if (mediaKeywords.test(prompt)) return true;
           if (conversationHistory?.some(m =>
             mediaKeywords.test(m.content)
@@ -585,7 +585,7 @@ export function streamClaude(options: ClaudeStreamOptions): ReadableStream<strin
           queryOptions.mcpServers = {
             ...(queryOptions.mcpServers || {}),
             'codepilot-media': createMediaImportMcpServer(sessionId, resolvedWorkingDirectory.path),
-            'codepilot-image-gen': createImageGenMcpServer(sessionId, resolvedWorkingDirectory.path),
+            'devpilot-image-gen': createImageGenMcpServer(sessionId, resolvedWorkingDirectory.path),
           };
           // Inject media capability hint into system prompt
           if (queryOptions.systemPrompt && typeof queryOptions.systemPrompt === 'object' && 'append' in queryOptions.systemPrompt) {
@@ -607,7 +607,7 @@ export function streamClaude(options: ClaudeStreamOptions): ReadableStream<strin
           const { createCliToolsMcpServer, CLI_TOOLS_MCP_SYSTEM_PROMPT } = await import('@/lib/cli-tools-mcp');
           queryOptions.mcpServers = {
             ...(queryOptions.mcpServers || {}),
-            'codepilot-cli-tools': createCliToolsMcpServer(),
+            'devpilot-cli-tools': createCliToolsMcpServer(),
           };
           if (queryOptions.systemPrompt && typeof queryOptions.systemPrompt === 'object' && 'append' in queryOptions.systemPrompt) {
             queryOptions.systemPrompt.append = (queryOptions.systemPrompt.append || '') + '\n\n' + CLI_TOOLS_MCP_SYSTEM_PROMPT;
@@ -626,7 +626,7 @@ export function streamClaude(options: ClaudeStreamOptions): ReadableStream<strin
           const { createDashboardMcpServer, DASHBOARD_MCP_SYSTEM_PROMPT } = await import('@/lib/dashboard-mcp');
           queryOptions.mcpServers = {
             ...(queryOptions.mcpServers || {}),
-            'codepilot-dashboard': createDashboardMcpServer(sessionId, resolvedWorkingDirectory.path),
+            'devpilot-dashboard': createDashboardMcpServer(sessionId, resolvedWorkingDirectory.path),
           };
           if (queryOptions.systemPrompt && typeof queryOptions.systemPrompt === 'object' && 'append' in queryOptions.systemPrompt) {
             queryOptions.systemPrompt.append = (queryOptions.systemPrompt.append || '') + '\n\n' + DASHBOARD_MCP_SYSTEM_PROMPT;
@@ -710,18 +710,18 @@ export function streamClaude(options: ClaudeStreamOptions): ReadableStream<strin
           // Note: SDK prefixes MCP tool names with mcp__<server>__, so we check
           // both bare and prefixed names.
           const autoApprovedTools = [
-            'codepilot_generate_image',
-            'codepilot_import_media',
-            'codepilot_load_widget_guidelines',
-            'codepilot_cli_tools_list',
-            'codepilot_cli_tools_add',
-            'codepilot_cli_tools_remove',
-            'codepilot_cli_tools_check_updates',
-            'codepilot_dashboard_pin',
-            'codepilot_dashboard_list',
-            'codepilot_dashboard_refresh',
-            'codepilot_dashboard_update',
-            'codepilot_dashboard_remove',
+            'devpilot_generate_image',
+            'devpilot_import_media',
+            'devpilot_load_widget_guidelines',
+            'devpilot_cli_tools_list',
+            'devpilot_cli_tools_add',
+            'devpilot_cli_tools_remove',
+            'devpilot_cli_tools_check_updates',
+            'devpilot_dashboard_pin',
+            'devpilot_dashboard_list',
+            'devpilot_dashboard_refresh',
+            'devpilot_dashboard_update',
+            'devpilot_dashboard_remove',
           ];
           if (autoApprovedTools.some(t => toolName === t || toolName.endsWith(`__${t}`))) {
             return { behavior: 'allow' as const, updatedInput: input };
@@ -1025,7 +1025,7 @@ export function streamClaude(options: ClaudeStreamOptions): ReadableStream<strin
                         }
                       }
                     }
-                    // Detect MEDIA_RESULT_MARKER in text result (from codepilot-image-gen MCP)
+                    // Detect MEDIA_RESULT_MARKER in text result (from devpilot-image-gen MCP)
                     const MEDIA_MARKER = '__MEDIA_RESULT__';
                     const markerIdx = resultContent.indexOf(MEDIA_MARKER);
                     if (markerIdx >= 0) {

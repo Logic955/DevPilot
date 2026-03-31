@@ -18,7 +18,7 @@ import { getSetting } from '@/lib/db';
 
 interface CachedMcpConfig {
   allServers: Record<string, MCPServerConfig>;
-  codepilotServers: Record<string, MCPServerConfig>; // Only servers with resolved ${...} placeholders
+  devpilotServers: Record<string, MCPServerConfig>; // Only servers with resolved ${...} placeholders
   timestamp: number;
 }
 
@@ -62,7 +62,7 @@ function loadAndMerge(): CachedMcpConfig {
   }
 
   // Resolve ${...} placeholders and track which servers needed resolution
-  const codepilotServers: Record<string, MCPServerConfig> = {};
+  const devpilotServers: Record<string, MCPServerConfig> = {};
 
   for (const [name, server] of Object.entries(merged)) {
     if (server.env) {
@@ -75,9 +75,9 @@ function loadAndMerge(): CachedMcpConfig {
           server.env[key] = resolved || '';
         }
       }
-      // Only include in codepilotServers if it had placeholders
+      // Only include in devpilotServers if it had placeholders
       if (hasPlaceholder && server.enabled !== false) {
-        codepilotServers[name] = server;
+        devpilotServers[name] = server;
       }
     }
   }
@@ -91,7 +91,7 @@ function loadAndMerge(): CachedMcpConfig {
 
   _cache = {
     allServers: merged,
-    codepilotServers,
+    devpilotServers,
     timestamp: Date.now(),
   };
 
@@ -109,10 +109,10 @@ function loadAndMerge(): CachedMcpConfig {
  *
  * Used by: route.ts, conversation-engine.ts — passed to streamClaude().
  */
-export function loadCodePilotMcpServers(): Record<string, MCPServerConfig> | undefined {
+export function loadDevPilotMcpServers(): Record<string, MCPServerConfig> | undefined {
   try {
-    const { codepilotServers } = loadAndMerge();
-    return Object.keys(codepilotServers).length > 0 ? codepilotServers : undefined;
+    const { devpilotServers } = loadAndMerge();
+    return Object.keys(devpilotServers).length > 0 ? devpilotServers : undefined;
   } catch {
     return undefined;
   }
@@ -122,7 +122,7 @@ export function loadCodePilotMcpServers(): Record<string, MCPServerConfig> | und
  * Load ALL MCP servers (for UI display in MCP Manager).
  *
  * Returns the full merged config from all sources with overrides applied.
- * NOT intended for passing to the SDK — use loadCodePilotMcpServers() instead.
+ * NOT intended for passing to the SDK — use loadDevPilotMcpServers() instead.
  *
  * Used by: MCP Manager UI, diagnostics.
  */

@@ -55,7 +55,7 @@ export interface FilePreview {
 // Skill / Command Types
 // ==========================================
 
-export type SkillKind = 'agent_skill' | 'slash_command' | 'sdk_command' | 'codepilot_command';
+export type SkillKind = 'agent_skill' | 'slash_command' | 'sdk_command' | 'devpilot_command';
 
 // ==========================================
 // Popover / Command Input Types

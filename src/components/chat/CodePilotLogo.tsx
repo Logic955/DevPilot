@@ -1,10 +1,10 @@
 import { cn } from '@/lib/utils';
 
-interface CodePilotLogoProps {
+interface DevPilotLogoProps {
   className?: string;
 }
 
-export function CodePilotLogo({ className }: CodePilotLogoProps) {
+export function DevPilotLogo({ className }: DevPilotLogoProps) {
   return (
     <svg
       viewBox="-150 -150 300 300"

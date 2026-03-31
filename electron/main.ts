@@ -316,7 +316,7 @@ function startServer(port: number): Electron.UtilityProcess {
     ...userShellEnv,
     PORT: String(port),
     HOSTNAME: '127.0.0.1',
-    CLAUDE_GUI_DATA_DIR: path.join(home, '.codepilot'),
+    CLAUDE_GUI_DATA_DIR: path.join(home, '.devpilot'),
     HOME: home,
     USERPROFILE: home,
     PATH: constructedPath,
@@ -328,7 +328,7 @@ function startServer(port: number): Electron.UtilityProcess {
     env,
     cwd: standaloneDir,
     stdio: 'pipe',
-    serviceName: 'codepilot-server',
+    serviceName: 'devpilot-server',
   });
 
   child.stdout?.on('data', (data: Buffer) => {

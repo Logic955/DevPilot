@@ -23,8 +23,8 @@ import { useGitStatus } from "@/hooks/useGitStatus";
 import { SetupCenter } from '@/components/setup/SetupCenter';
 import { Toaster } from '@/components/ui/toast';
 
-const SPLIT_SESSIONS_KEY = "codepilot:split-sessions";
-const SPLIT_ACTIVE_COLUMN_KEY = "codepilot:split-active-column";
+const SPLIT_SESSIONS_KEY = "devpilot:split-sessions";
+const SPLIT_ACTIVE_COLUMN_KEY = "devpilot:split-active-column";
 
 function loadSplitSessions(): SplitSession[] {
   if (typeof window === "undefined") return [];
@@ -110,7 +110,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // Restore persisted width after hydration
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
-    const saved = localStorage.getItem("codepilot_chatlist_width");
+    const saved = localStorage.getItem("devpilot_chatlist_width");
     if (saved) setChatListWidth(parseInt(saved));
   }, []);
   /* eslint-enable react-hooks/set-state-in-effect */
@@ -120,7 +120,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, []);
   const handleChatListResizeEnd = useCallback(() => {
     setChatListWidth((w) => {
-      localStorage.setItem("codepilot_chatlist_width", String(w));
+      localStorage.setItem("devpilot_chatlist_width", String(w));
       return w;
     });
   }, []);

@@ -274,7 +274,7 @@ export function ProviderDoctorDialog({ open, onOpenChange }: ProviderDoctorDialo
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `codepilot-doctor-${new Date().toISOString().slice(0, 10)}.json`;
+      a.download = `devpilot-doctor-${new Date().toISOString().slice(0, 10)}.json`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -402,7 +402,7 @@ export function ProviderDoctorDialog({ open, onOpenChange }: ProviderDoctorDialo
                   : "如果您仍然遇到问题，"}
                 请先点击「导出日志」，然后前往{" "}
                 <a
-                  href="https://github.com/op7418/CodePilot/issues"
+                  href="https://github.com/op7418/DevPilot/issues"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline text-foreground hover:no-underline"
@@ -413,7 +413,7 @@ export function ProviderDoctorDialog({ open, onOpenChange }: ProviderDoctorDialo
                 <br />
                 📖 查看{" "}
                 <a
-                  href="https://www.codepilot.sh/zh/docs/providers"
+                  href="https://www.devpilot.app/zh/docs/providers"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline text-foreground hover:no-underline"
@@ -428,7 +428,7 @@ export function ProviderDoctorDialog({ open, onOpenChange }: ProviderDoctorDialo
                   : "If you're still experiencing problems, "}
                 click &ldquo;Export Logs&rdquo; first, then{" "}
                 <a
-                  href="https://github.com/op7418/CodePilot/issues"
+                  href="https://github.com/op7418/DevPilot/issues"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline text-foreground hover:no-underline"
@@ -439,7 +439,7 @@ export function ProviderDoctorDialog({ open, onOpenChange }: ProviderDoctorDialo
                 <br />
                 📖 See the{" "}
                 <a
-                  href="https://www.codepilot.sh/docs/providers"
+                  href="https://www.devpilot.app/docs/providers"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline text-foreground hover:no-underline"

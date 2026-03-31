@@ -9,7 +9,7 @@ import { startStream } from '@/lib/stream-session-manager';
 // The heartbeat is scoped: isOwnerAlive(hookTriggeredSessionId) only returns
 // true if the heartbeat's sessionId matches, so a stale heartbeat from a
 // completed session can't masquerade as a different session's owner.
-const HEARTBEAT_KEY = 'codepilot:onboarding-heartbeat';
+const HEARTBEAT_KEY = 'devpilot:onboarding-heartbeat';
 const HEARTBEAT_INTERVAL = 10_000;   // write every 10s
 const HEARTBEAT_STALE_MS = 30_000;   // consider dead after 30s without update
 

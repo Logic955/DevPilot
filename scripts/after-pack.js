@@ -78,7 +78,7 @@ module.exports = async function afterPack(context) {
   // macOS: <appOutDir>/CodePilot.app/Contents/Resources/standalone/...
   // Windows/Linux: <appOutDir>/resources/standalone/...
   const searchRoots = [
-    path.join(appOutDir, 'CodePilot.app', 'Contents', 'Resources', 'standalone'),
+    path.join(appOutDir, 'DevPilot.app', 'Contents', 'Resources', 'standalone'),
     path.join(appOutDir, 'Contents', 'Resources', 'standalone'),
     path.join(appOutDir, 'resources', 'standalone'),
   ];

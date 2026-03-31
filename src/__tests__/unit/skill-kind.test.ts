@@ -19,7 +19,7 @@ describe('SkillKind type values', () => {
     'agent_skill',
     'slash_command',
     'sdk_command',
-    'codepilot_command',
+    'devpilot_command',
   ];
 
   it('should include exactly 4 expected kinds', () => {
@@ -61,33 +61,33 @@ const BUILT_IN_COMMANDS: BuiltInCommandStub[] = [
   { label: 'clear', value: '/clear', immediate: true },
   { label: 'cost', value: '/cost', immediate: true },
   { label: 'compact', value: '/compact', kind: 'sdk_command' },
-  { label: 'doctor', value: '/doctor', kind: 'codepilot_command' },
+  { label: 'doctor', value: '/doctor', kind: 'devpilot_command' },
   { label: 'init', value: '/init', kind: 'sdk_command' },
   { label: 'review', value: '/review', kind: 'sdk_command' },
-  { label: 'terminal-setup', value: '/terminal-setup', kind: 'codepilot_command' },
-  { label: 'memory', value: '/memory', kind: 'codepilot_command' },
+  { label: 'terminal-setup', value: '/terminal-setup', kind: 'devpilot_command' },
+  { label: 'memory', value: '/memory', kind: 'devpilot_command' },
 ];
 
 describe('COMMAND_PROMPTS mapping', () => {
-  it('should only have entries for codepilot_command kind', () => {
+  it('should only have entries for devpilot_command kind', () => {
     const codepilotCommands = BUILT_IN_COMMANDS
-      .filter(c => c.kind === 'codepilot_command')
+      .filter(c => c.kind === 'devpilot_command')
       .map(c => c.value);
 
     for (const key of Object.keys(COMMAND_PROMPTS)) {
       assert.ok(
         codepilotCommands.includes(key),
-        `COMMAND_PROMPTS key "${key}" should correspond to a codepilot_command`,
+        `COMMAND_PROMPTS key "${key}" should correspond to a devpilot_command`,
       );
     }
   });
 
-  it('every codepilot_command should have an expansion prompt', () => {
-    const codepilotCommands = BUILT_IN_COMMANDS.filter(c => c.kind === 'codepilot_command');
+  it('every devpilot_command should have an expansion prompt', () => {
+    const codepilotCommands = BUILT_IN_COMMANDS.filter(c => c.kind === 'devpilot_command');
     for (const cmd of codepilotCommands) {
       assert.ok(
         COMMAND_PROMPTS[cmd.value],
-        `codepilot_command "${cmd.value}" should have an expansion prompt in COMMAND_PROMPTS`,
+        `devpilot_command "${cmd.value}" should have an expansion prompt in COMMAND_PROMPTS`,
       );
     }
   });
@@ -215,12 +215,12 @@ describe('badge dispatch logic', () => {
     });
   });
 
-  describe('codepilot_command kind', () => {
+  describe('devpilot_command kind', () => {
     const badge: CommandBadge = {
       command: '/doctor',
       label: 'doctor',
       description: 'Diagnose project health',
-      kind: 'codepilot_command',
+      kind: 'devpilot_command',
     };
 
     it('should expand via COMMAND_PROMPTS when no user content', () => {
@@ -240,7 +240,7 @@ describe('badge dispatch logic', () => {
         command: '/unknown-codepilot',
         label: 'unknown-codepilot',
         description: 'Unknown',
-        kind: 'codepilot_command',
+        kind: 'devpilot_command',
       };
       const result = dispatchBadge(unknownBadge, '');
       assert.equal(result.prompt, '/unknown-codepilot');
@@ -259,7 +259,7 @@ describe('badge dispatch logic', () => {
 
   describe('cross-kind consistency', () => {
     it('all kinds should produce a displayLabel starting with /', () => {
-      const kinds: SkillKind[] = ['agent_skill', 'slash_command', 'sdk_command', 'codepilot_command'];
+      const kinds: SkillKind[] = ['agent_skill', 'slash_command', 'sdk_command', 'devpilot_command'];
       for (const kind of kinds) {
         const badge: CommandBadge = {
           command: '/test',
@@ -273,7 +273,7 @@ describe('badge dispatch logic', () => {
     });
 
     it('all kinds should produce a non-empty prompt', () => {
-      const kinds: SkillKind[] = ['agent_skill', 'slash_command', 'sdk_command', 'codepilot_command'];
+      const kinds: SkillKind[] = ['agent_skill', 'slash_command', 'sdk_command', 'devpilot_command'];
       for (const kind of kinds) {
         const badge: CommandBadge = {
           command: '/test',

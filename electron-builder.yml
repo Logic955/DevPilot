@@ -3,7 +3,7 @@ productName: DevPilot
 publish:
   provider: github
   owner: op7418
-  repo: CodePilot
+  repo: DevPilot
 directories:
   output: release
 files:

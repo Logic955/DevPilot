@@ -44,7 +44,7 @@ export default function ChatSessionPage({ params }: ChatSessionPageProps) {
           if (cancelled) return;
           if (data.session.working_directory) {
             setWorkingDirectory(data.session.working_directory);
-            localStorage.setItem("codepilot:last-working-directory", data.session.working_directory);
+            localStorage.setItem("devpilot:last-working-directory", data.session.working_directory);
             window.dispatchEvent(new Event('refresh-file-tree'));
           }
           setSessionId(id);

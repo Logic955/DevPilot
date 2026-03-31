@@ -14,7 +14,7 @@ import {
 } from '@/components/ai-elements/conversation';
 import { MessageItem } from './MessageItem';
 import { StreamingMessage } from './StreamingMessage';
-import { CodePilotLogo } from './CodePilotLogo';
+import { DevPilotLogo } from './CodePilotLogo';
 
 /**
  * Scrolls to bottom when streaming starts or new messages are appended.
@@ -218,7 +218,7 @@ export function MessageList({
         <ConversationEmptyState
           title="Claude Chat"
           description={t('messageList.emptyDescription')}
-          icon={<CodePilotLogo className="h-16 w-16" />}
+          icon={<DevPilotLogo className="h-16 w-16" />}
         />
       </div>
     );

@@ -21,11 +21,11 @@ export const MEDIA_RESULT_MARKER = '__MEDIA_RESULT__';
 
 export function createImageGenMcpServer(sessionId?: string, workingDirectory?: string) {
   return createSdkMcpServer({
-    name: 'codepilot-image-gen',
+    name: 'devpilot-image-gen',
     version: '1.0.0',
     tools: [
       tool(
-        'codepilot_generate_image',
+        'devpilot_generate_image',
         'Generate an image using Gemini. The generated image will automatically appear inline in the chat and be saved to the media library. Use this when the user asks you to create, draw, or generate an image. Write prompts in English for best results.',
         {
           prompt: z.string().describe('Detailed image generation prompt in English'),

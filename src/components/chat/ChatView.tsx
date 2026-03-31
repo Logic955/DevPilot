@@ -50,8 +50,8 @@ export function ChatView({ sessionId, initialMessages = [], initialHasMore = fal
   const [loadingMore, setLoadingMore] = useState(false);
   const loadingMoreRef = useRef(false);
   const [mode, setMode] = useState<string>(initialMode || 'code');
-  const [currentModel, setCurrentModel] = useState(() => modelName || (typeof window !== 'undefined' ? localStorage.getItem('codepilot:last-model') : null) || 'sonnet');
-  const [currentProviderId, setCurrentProviderId] = useState(() => providerId || (typeof window !== 'undefined' ? localStorage.getItem('codepilot:last-provider-id') : null) || '');
+  const [currentModel, setCurrentModel] = useState(() => modelName || (typeof window !== 'undefined' ? localStorage.getItem('devpilot:last-model') : null) || 'sonnet');
+  const [currentProviderId, setCurrentProviderId] = useState(() => providerId || (typeof window !== 'undefined' ? localStorage.getItem('devpilot:last-provider-id') : null) || '');
   const [selectedEffort, setSelectedEffort] = useState<string | undefined>(undefined);
   const [thinkingMode, setThinkingMode] = useState<string>('adaptive');
   const [context1m, setContext1m] = useState(false);
@@ -215,8 +215,8 @@ export function ChatView({ sessionId, initialMessages = [], initialHasMore = fal
 
   const handleOpenNewAssistant = useCallback(async () => {
     try {
-      const model = typeof window !== 'undefined' ? localStorage.getItem('codepilot:last-model') || '' : '';
-      const provider_id = typeof window !== 'undefined' ? localStorage.getItem('codepilot:last-provider-id') || '' : '';
+      const model = typeof window !== 'undefined' ? localStorage.getItem('devpilot:last-model') || '' : '';
+      const provider_id = typeof window !== 'undefined' ? localStorage.getItem('devpilot:last-provider-id') || '' : '';
       const res = await fetch('/api/workspace/session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

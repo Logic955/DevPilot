@@ -154,8 +154,8 @@ export function AssistantWorkspaceSection() {
         }
 
         try {
-          const model = typeof window !== 'undefined' ? localStorage.getItem('codepilot:last-model') || '' : '';
-          const provider_id = typeof window !== 'undefined' ? localStorage.getItem('codepilot:last-provider-id') || '' : '';
+          const model = typeof window !== 'undefined' ? localStorage.getItem('devpilot:last-model') || '' : '';
+          const provider_id = typeof window !== 'undefined' ? localStorage.getItem('devpilot:last-provider-id') || '' : '';
           const sessionMode = navigateMode === 'reuse' ? 'checkin' : 'onboarding';
           const sessionRes = await fetch("/api/workspace/session", {
             method: "POST",
@@ -278,8 +278,8 @@ export function AssistantWorkspaceSection() {
     if (!workspace?.path) return;
     setCreatingSession(true);
     try {
-      const model = typeof window !== 'undefined' ? localStorage.getItem('codepilot:last-model') || '' : '';
-      const provider_id = typeof window !== 'undefined' ? localStorage.getItem('codepilot:last-provider-id') || '' : '';
+      const model = typeof window !== 'undefined' ? localStorage.getItem('devpilot:last-model') || '' : '';
+      const provider_id = typeof window !== 'undefined' ? localStorage.getItem('devpilot:last-provider-id') || '' : '';
       const res = await fetch("/api/workspace/session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

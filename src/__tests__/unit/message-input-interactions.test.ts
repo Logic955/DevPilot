@@ -182,13 +182,13 @@ describe('Popover item selection (Enter/Tab)', () => {
     assert.equal(result.badge.installedSource, 'agents');
   });
 
-  it('selecting codepilot_command sets badge with codepilot_command kind', () => {
+  it('selecting devpilot_command sets badge with devpilot_command kind', () => {
     const doctorItem = BUILT_IN_COMMANDS.find((c) => c.label === 'doctor')!;
     assert.ok(doctorItem, 'doctor command must exist in BUILT_IN_COMMANDS');
     const result = resolveItemSelection(doctorItem, 'skill', 0, '/', '');
     assert.equal(result.action, 'set_badge');
     assert.ok(result.badge);
-    assert.equal(result.badge.kind, 'codepilot_command');
+    assert.equal(result.badge.kind, 'devpilot_command');
   });
 
   it('selecting item with no explicit kind defaults to slash_command', () => {
@@ -303,12 +303,12 @@ describe('Badge dispatch by kind', () => {
     });
   });
 
-  describe('codepilot_command', () => {
+  describe('devpilot_command', () => {
     const badge: CommandBadge = {
       command: '/doctor',
       label: 'doctor',
       description: 'Diagnose project health',
-      kind: 'codepilot_command',
+      kind: 'devpilot_command',
     };
 
     it('expands via COMMAND_PROMPTS when no user content', () => {
@@ -327,7 +327,7 @@ describe('Badge dispatch by kind', () => {
         command: '/unknown',
         label: 'unknown',
         description: '',
-        kind: 'codepilot_command',
+        kind: 'devpilot_command',
       };
       const result = dispatchBadge(unknownBadge, '');
       assert.equal(result.prompt, '/unknown');
@@ -534,11 +534,11 @@ describe('Direct slash command typed in input', () => {
     assert.equal(result.badge.kind, 'sdk_command');
   });
 
-  it('/doctor becomes a codepilot_command badge', () => {
+  it('/doctor becomes a devpilot_command badge', () => {
     const result = resolveDirectSlash('/doctor');
     assert.equal(result.action, 'set_badge');
     assert.ok(result.badge);
-    assert.equal(result.badge.kind, 'codepilot_command');
+    assert.equal(result.badge.kind, 'devpilot_command');
   });
 
   it('unknown /command becomes slash_command badge', () => {
@@ -636,7 +636,7 @@ describe('Full keyboard interaction scenarios', () => {
     assert.equal(result.action, 'set_badge');
     assert.ok(result.badge);
     assert.equal(result.badge.command, '/doctor');
-    assert.equal(result.badge.kind, 'codepilot_command');
+    assert.equal(result.badge.kind, 'devpilot_command');
   });
 
   it('typing /help -> Enter immediately triggers command', () => {
@@ -720,13 +720,13 @@ describe('Built-in commands data integrity (real BUILT_IN_COMMANDS)', () => {
     }
   });
 
-  it('all codepilot_commands have expansion prompts in COMMAND_PROMPTS', () => {
-    const codepilotCmds = BUILT_IN_COMMANDS.filter((c) => c.kind === 'codepilot_command');
-    assert.ok(codepilotCmds.length > 0, 'there should be at least one codepilot_command');
+  it('all devpilot_commands have expansion prompts in COMMAND_PROMPTS', () => {
+    const codepilotCmds = BUILT_IN_COMMANDS.filter((c) => c.kind === 'devpilot_command');
+    assert.ok(codepilotCmds.length > 0, 'there should be at least one devpilot_command');
     for (const cmd of codepilotCmds) {
       assert.ok(
         COMMAND_PROMPTS[cmd.value],
-        `codepilot_command "${cmd.value}" should have an expansion prompt`,
+        `devpilot_command "${cmd.value}" should have an expansion prompt`,
       );
     }
   });
@@ -758,14 +758,14 @@ describe('Built-in commands data integrity (real BUILT_IN_COMMANDS)', () => {
     }
   });
 
-  it('COMMAND_PROMPTS keys are a subset of codepilot_command values', () => {
+  it('COMMAND_PROMPTS keys are a subset of devpilot_command values', () => {
     const codepilotValues = new Set(
-      BUILT_IN_COMMANDS.filter((c) => c.kind === 'codepilot_command').map((c) => c.value),
+      BUILT_IN_COMMANDS.filter((c) => c.kind === 'devpilot_command').map((c) => c.value),
     );
     for (const key of Object.keys(COMMAND_PROMPTS)) {
       assert.ok(
         codepilotValues.has(key),
-        `COMMAND_PROMPTS key "${key}" is not a codepilot_command in BUILT_IN_COMMANDS`,
+        `COMMAND_PROMPTS key "${key}" is not a devpilot_command in BUILT_IN_COMMANDS`,
       );
     }
   });

@@ -36,8 +36,8 @@ const zh: Record<TranslationKey, string> = {
   'chatList.showLess': '收起',
 
   // ── Message list ────────────────────────────────────────────
-  'messageList.claudeChat': 'CodePilot 对话',
-  'messageList.emptyDescription': '开始与 CodePilot 对话。提问、获取代码帮助或探索想法。',
+  'messageList.claudeChat': 'DevPilot 对话',
+  'messageList.emptyDescription': '开始与 DevPilot 对话。提问、获取代码帮助或探索想法。',
   'messageList.loadEarlier': '加载更早的消息',
   'messageList.loading': '加载中...',
 
@@ -70,11 +70,11 @@ const zh: Record<TranslationKey, string> = {
 
   // ── Settings: General ───────────────────────────────────────
   'settings.title': '设置',
-  'settings.description': '管理 CodePilot 和 Claude CLI 设置',
+  'settings.description': '管理 DevPilot 和 Claude CLI 设置',
   'settings.general': '通用',
   'settings.providers': '服务商',
   'settings.claudeCli': 'Claude CLI',
-  'settings.codepilot': 'CodePilot',
+  'settings.codepilot': 'DevPilot',
   'settings.version': '版本 {version}',
   'settings.checkForUpdates': '检查更新',
   'settings.checking': '检查中...',
@@ -100,7 +100,7 @@ const zh: Record<TranslationKey, string> = {
 
   // ── Settings: Appearance ──────────────────────────────────────
   'settings.appearance': '外观',
-  'settings.appearanceDesc': '自定义 CodePilot 的外观和风格',
+  'settings.appearanceDesc': '自定义 DevPilot 的外观和风格',
   'settings.themeMode': '主题模式',
   'settings.themeModeDesc': '选择浅色、深色或跟随系统',
   'settings.themeFamily': '颜色主题',
@@ -176,7 +176,7 @@ const zh: Record<TranslationKey, string> = {
   'provider.disconnecting': '断开中...',
   'provider.disconnectProvider': '断开提供商',
   'provider.disconnectConfirm': '确定要断开"{name}"吗？此操作无法撤销。',
-  'provider.ccSwitchHint': '通过类似 cc switch 等工具添加的 Claude Code 配置可能无法被 CodePilot 读取，建议在此处重新添加。',
+  'provider.ccSwitchHint': '通过类似 cc switch 等工具添加的 Claude Code 配置可能无法被 DevPilot 读取，建议在此处重新添加。',
   'provider.addProviderSection': '添加提供商',
   'provider.addProviderDesc': '选择要连接的提供商。大多数预设只需填写 API 密钥。',
 
@@ -383,10 +383,10 @@ const zh: Record<TranslationKey, string> = {
   'update.downloading': '下载中',
   'update.restartToUpdate': '重启以更新',
   'update.restartNow': '立即重启',
-  'update.readyToInstall': 'CodePilot v{version} 已就绪 — 重启以完成更新',
+  'update.readyToInstall': 'DevPilot v{version} 已就绪 — 重启以完成更新',
   'update.installUpdate': '下载并安装',
   'update.later': '稍后',
-  'update.rosettaWarning': 'CodePilot 当前正通过 Rosetta 在这台 Apple Silicon Mac 上运行。安装 arm64 版本可获得更好的响应速度。',
+  'update.rosettaWarning': 'DevPilot 当前正通过 Rosetta 在这台 Apple Silicon Mac 上运行。安装 arm64 版本可获得更好的响应速度。',
   'update.recommendedAsset': '推荐下载：{asset}',
   'update.getRecommendedBuild': '下载推荐版本',
 
@@ -707,7 +707,7 @@ const zh: Record<TranslationKey, string> = {
   'mcp.enable': '启用',
   'mcp.enabled': '已启用',
   'mcp.disabled': '已禁用',
-  'mcp.managerDesc': '开关控制 CodePilot 注入的 MCP 服务。Claude Code 自身配置中的服务仍可能被 SDK 通过 settingSources 自动加载。',
+  'mcp.managerDesc': '开关控制 DevPilot 注入的 MCP 服务。Claude Code 自身配置中的服务仍可能被 SDK 通过 settingSources 自动加载。',
 
   // ── SDK Capabilities: Thinking ────────────────────────────
   'settings.thinkingMode': '思考模式',
@@ -760,7 +760,7 @@ const zh: Record<TranslationKey, string> = {
   'cliTools.path': '路径',
   'cliTools.brewNotInstalled': '未检测到 Homebrew',
   'cliTools.brewInstallGuide': '大部分推荐工具依赖 Homebrew 安装，请先在终端中运行以下命令安装：',
-  'cliTools.viewDocs': '查看 CodePilot 官方文档',
+  'cliTools.viewDocs': '查看 DevPilot 官方文档',
   'cliTools.searchPlaceholder': '搜索 CLI 工具...',
   'cliTools.noToolsDetected': '还没有检测到已安装的 CLI 工具',
   'cliTools.goInstall': '去安装 CLI 工具',
@@ -901,7 +901,7 @@ const zh: Record<TranslationKey, string> = {
   'terminal.exited': '进程已退出',
 
   // ── Setup Center ──────────────────────────────────────────────
-  'setup.title': '欢迎使用 CodePilot',
+  'setup.title': '欢迎使用 DevPilot',
   'setup.subtitle': '让我们快速完成几个设置步骤。',
   'setup.skipAndEnter': '跳过并进入',
   'setup.progress': '{completed}/3 已完成',
@@ -911,11 +911,11 @@ const zh: Record<TranslationKey, string> = {
 
   // Setup: Welcome card
   'setup.welcome.title': '欢迎',
-  'setup.welcome.description': 'CodePilot 是 Claude Code 的桌面 GUI 客户端。它连接到 Claude Code CLI，提供 AI 辅助编码的可视化界面。',
+  'setup.welcome.description': 'DevPilot 是 Claude Code 的桌面 GUI 客户端。它连接到 Claude Code CLI，提供 AI 辅助编码的可视化界面。',
 
   // Setup: Claude Code card
   'setup.claude.title': 'Claude Code CLI',
-  'setup.claude.description': 'CodePilot 需要 Claude Code CLI 才能正常工作。',
+  'setup.claude.description': 'DevPilot 需要 Claude Code CLI 才能正常工作。',
   'setup.claude.detected': '已检测到 Claude Code',
   'setup.claude.notFound': '未找到 Claude Code',
   'setup.claude.conflict': '检测到多个安装版本，可能导致版本冲突',
@@ -932,7 +932,7 @@ const zh: Record<TranslationKey, string> = {
 
   // Setup: Provider card
   'setup.provider.title': 'API 服务商',
-  'setup.provider.description': '配置 CodePilot 连接 AI 模型的方式。',
+  'setup.provider.description': '配置 DevPilot 连接 AI 模型的方式。',
   'setup.provider.envDetected': '检测到环境变量 — 使用 Claude Code 环境变量作为服务商。',
   'setup.provider.useEnv': '使用 Claude Code 环境',
   'setup.provider.noProvider': '未配置服务商。选择一个预设开始。',
