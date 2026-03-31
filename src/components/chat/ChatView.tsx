@@ -56,9 +56,19 @@ export function ChatView({ sessionId, initialMessages = [], initialHasMore = fal
   const [thinkingMode, setThinkingMode] = useState<string>('adaptive');
   const [context1m, setContext1m] = useState(false);
 
-  // Sync model/provider when session data loads
-  useEffect(() => { if (modelName) setCurrentModel(modelName); }, [modelName]);
-  useEffect(() => { if (providerId) setCurrentProviderId(providerId); }, [providerId]);
+  // Sync model/provider when session data loads, and persist as the "last used" for new sessions
+  useEffect(() => {
+    if (modelName) {
+      setCurrentModel(modelName);
+      localStorage.setItem('devpilot:last-model', modelName);
+    }
+  }, [modelName]);
+  useEffect(() => {
+    if (providerId !== undefined) {
+      setCurrentProviderId(providerId);
+      localStorage.setItem('devpilot:last-provider-id', providerId);
+    }
+  }, [providerId]);
 
   // Fetch provider-specific options (with abort to prevent stale responses on fast switch)
   useEffect(() => {
