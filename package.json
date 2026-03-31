@@ -15,7 +15,7 @@
   "main": "dist-electron/main.js",
   "scripts": {
     "postinstall": "npm rebuild better-sqlite3",
-    "dev": "next dev",
+    "dev": "env -u CLAUDE_GUI_DATA_DIR next dev",
     "build": "env -u __NEXT_PRIVATE_STANDALONE_CONFIG -u __NEXT_PRIVATE_ORIGIN -u TURBOPACK next build --webpack",
     "start": "next start",
     "lint": "eslint",
@@ -31,6 +31,7 @@
     "electron:build": "env -u __NEXT_PRIVATE_STANDALONE_CONFIG -u __NEXT_PRIVATE_ORIGIN -u TURBOPACK next build --webpack && node scripts/build-electron.mjs",
     "electron:pack": "npm run electron:build && electron-builder --config electron-builder.yml",
     "electron:pack:mac": "npm run electron:build && electron-builder --mac --config electron-builder.yml",
+    "electron:pack:mac:arm64": "npm run electron:build && electron-builder --mac --arm64 --config electron-builder.yml",
     "electron:pack:win": "npm run electron:build && electron-builder --win --config electron-builder.yml",
     "electron:pack:linux": "npm run electron:build && electron-builder --linux --config electron-builder.yml"
   },
