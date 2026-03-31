@@ -58,6 +58,9 @@ export function getDb(): Database.Database {
     if (!fs.existsSync(DB_PATH)) {
       const home = os.homedir();
       const oldPaths = [
+        // ~/.codepilot/ (old home-dir location, before rename to DevPilot)
+        path.join(home, '.codepilot', 'codepilot.db'),
+        path.join(home, '.codepilot', 'devpilot.db'),
         // Old Electron userData paths (app.getPath('userData'))
         path.join(home, 'Library', 'Application Support', 'CodePilot', 'codepilot.db'),
         path.join(home, 'Library', 'Application Support', 'codepilot', 'codepilot.db'),
