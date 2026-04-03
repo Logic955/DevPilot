@@ -1,7 +1,7 @@
 <img src="docs/icon-readme.png" width="32" height="32" alt="CodePilot" style="vertical-align: middle; margin-right: 8px;" /> CodePilot
 ===
 
-**Claude Code 的统一桌面客户端** -- 多 Provider 支持、MCP 扩展、自定义技能、跨平台 Bridge，以及理解你项目的助手工作区。
+**Claude Code 的统一桌面客户端** -- 多 Provider 支持、MCP 扩展、自定义技能，以及理解你项目的助手工作区。
 
 [![GitHub release](https://img.shields.io/github/v/release/op7418/CodePilot)](https://github.com/op7418/CodePilot/releases)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey)](https://github.com/op7418/CodePilot/releases)
@@ -22,8 +22,6 @@
 **多 Provider，统一界面。** 连接 Anthropic、OpenRouter、Bedrock、Vertex 或任何自定义端点。对话中随时切换 Provider 和模型，不丢失上下文。
 
 **MCP + Skills 扩展体系。** 添加 MCP 服务器（stdio / sse / http），支持运行时状态监控。定义可复用的提示词技能 -- 全局或项目级 -- 作为斜杠命令调用。从 skills.sh 浏览和安装社区技能。
-
-**随时随地控制。** Bridge 连接 CodePilot 到 Telegram、飞书、Discord 和 QQ。在手机上发消息，在桌面上收回复。
 
 **了解你项目的助手。** 设置一个工作区目录，放入人设文件（soul.md、user.md）、规则（claude.md）和持久记忆（memory.md）。Claude 利用这些文件随时间适应你的项目惯例，支持 Onboarding 流程和每日签到。
 
@@ -91,7 +89,6 @@ npm run electron:dev     # 完整桌面应用
 | Provider | Anthropic / OpenRouter / Bedrock / Vertex / 自定义端点 |
 | MCP 服务器 | stdio / sse / http，运行时状态监控 |
 | Skills | 自定义 / 项目 / 全局技能，skills.sh 市场 |
-| Bridge | Telegram / 飞书 / Discord / QQ 远程控制 |
 | CLI 导入 | 导入 Claude Code CLI .jsonl 会话历史 |
 | 图片生成 | Gemini / Anthropic 生图、批量任务、画廊 |
 
@@ -156,7 +153,6 @@ xattr -cr /Applications/CodePilot.app
 - [服务商配置](https://www.codepilot.sh/zh/docs/providers) -- 配置 Anthropic、OpenRouter、Bedrock、Vertex 和自定义端点
 - [MCP 服务器](https://www.codepilot.sh/zh/docs/mcp) -- 添加和管理 Model Context Protocol 服务器
 - [Skills 技能](https://www.codepilot.sh/zh/docs/skills) -- 自定义技能、项目技能和 skills.sh 市场
-- [Bridge 桥接](https://www.codepilot.sh/zh/docs/bridge) -- 通过 Telegram、飞书、Discord、QQ 远程控制
 - [Assistant Workspace](https://www.codepilot.sh/zh/docs/assistant-workspace) -- 人设文件、Onboarding、记忆、每日签到
 - [常见问题](https://www.codepilot.sh/zh/docs/faq) -- 常见问题和解决方案
 
@@ -195,12 +191,6 @@ npm install -g @anthropic-ai/claude-code
 <summary>Workspace 文件到底在哪</summary>
 
 设置工作区后，CodePilot 在**工作区根目录**创建四个 Markdown 文件：`soul.md`（人设）、`user.md`（用户档案）、`claude.md`（规则）、`memory.md`（长期笔记）。状态跟踪（Onboarding 进度、签到日期）保存在 `.assistant/` 子目录中。每日记忆保存在 `memory/daily/` 中。
-</details>
-
-<details>
-<summary>Bridge 需要额外的平台配置</summary>
-
-每个 Bridge 通道（Telegram、飞书、Discord、QQ）都需要各自的 Bot Token 或应用凭证。在侧边栏的 **Bridge** 页面配置通道。你需要先在目标平台创建 Bot 并获取 Token，然后提供给 CodePilot。
 </details>
 
 ---

@@ -9,7 +9,7 @@
 - `claude-client` and `text-generator` are two independent provider resolution chains
 - GLM/Kimi/MiniMax/Volcengine/Bailian are Anthropic-compatible but built as `custom` (OpenAI-compatible in text-generator)
 - Model listing relies on hardcoded base_url → model label mapping
-- Bridge/chat/onboarding/checkin/plan have divergent provider resolution
+- Chat/onboarding/checkin/plan have divergent provider resolution
 - No contract tests
 
 ## Solution

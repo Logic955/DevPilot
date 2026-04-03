@@ -11,7 +11,6 @@ export const zh: MarketingContent = {
       { src: '/screenshots/providers.svg', alt: 'Provider 管理', caption: '连接并切换多个 AI 提供商' },
       { src: '/screenshots/mcp-skills.svg', alt: 'MCP 和 Skills', caption: '通过 MCP 和 Skills 扩展能力' },
       { src: '/screenshots/workspace.svg', alt: 'Assistant Workspace', caption: '实时检查文件和审查更改' },
-      { src: '/screenshots/bridge.svg', alt: 'Bridge 消息', caption: '在手机上继续对话' },
     ],
   },
   features: {
@@ -148,7 +147,7 @@ export const zh: MarketingContent = {
       {
         step: '3',
         title: '开始会话',
-        description: '按需连接 Workspace、MCP 或 Bridge。',
+        description: '按需连接 Workspace、MCP 或 Skills。',
       },
     ],
   },
@@ -158,7 +157,6 @@ export const zh: MarketingContent = {
       { title: '快速开始', description: '安装与第一步。', href: '/docs' },
       { title: 'Providers', description: '配置 AI 提供商。', href: '/docs/providers' },
       { title: 'MCP', description: '设置 MCP 服务器。', href: '/docs/mcp' },
-      { title: 'Bridge', description: '连接消息平台。', href: '/docs/bridge' },
       { title: 'Workspace', description: '文件检查与上下文。', href: '/docs/workspace' },
     ],
   },

@@ -1,7 +1,7 @@
 <img src="docs/icon-readme.png" width="32" height="32" alt="CodePilot" style="vertical-align: middle; margin-right: 8px;" /> CodePilot
 ===
 
-**Claude Code の統合デスクトップクライアント** -- マルチプロバイダー対応、MCP 拡張、カスタムスキル、クロスプラットフォーム Bridge、プロジェクトを理解するアシスタントワークスペース。
+**Claude Code の統合デスクトップクライアント** -- マルチプロバイダー対応、MCP 拡張、カスタムスキル、プロジェクトを理解するアシスタントワークスペース。
 
 [![GitHub release](https://img.shields.io/github/v/release/op7418/CodePilot)](https://github.com/op7418/CodePilot/releases)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey)](https://github.com/op7418/CodePilot/releases)
@@ -22,8 +22,6 @@
 **マルチプロバイダー、ひとつのインターフェース。** Anthropic、OpenRouter、Bedrock、Vertex、または任意のカスタムエンドポイントに接続。会話の途中でプロバイダーやモデルを切り替えても、コンテキストは維持されます。
 
 **MCP + Skills で拡張。** MCP サーバー（stdio / sse / http）を追加し、ランタイム状態を監視。再利用可能なプロンプトベースのスキルを定義し、スラッシュコマンドとして呼び出せます。skills.sh からコミュニティスキルを閲覧・インストール可能。
-
-**どこからでも制御。** Bridge で CodePilot を Telegram、Feishu、Discord、QQ に接続。スマートフォンからメッセージを送り、デスクトップで返答を受け取れます。
 
 **プロジェクトを理解するアシスタント。** ワークスペースディレクトリにペルソナファイル（soul.md、user.md）、ルール（claude.md）、永続メモリ（memory.md）を配置。Claude はこれらを使い、プロジェクトの慣例に適応します。Onboarding フローやデイリーチェックインにも対応。
 
@@ -91,7 +89,6 @@ npm run electron:dev     # フルデスクトップアプリ
 | プロバイダー | Anthropic / OpenRouter / Bedrock / Vertex / カスタムエンドポイント |
 | MCP サーバー | stdio / sse / http、ランタイム状態監視 |
 | スキル | カスタム / プロジェクト / グローバルスキル、skills.sh マーケットプレイス |
-| Bridge | Telegram / Feishu / Discord / QQ リモート制御 |
 | CLI インポート | Claude Code CLI .jsonl セッション履歴のインポート |
 | 画像生成 | Gemini / Anthropic 画像生成、バッチタスク、ギャラリー |
 
@@ -156,7 +153,6 @@ xattr -cr /Applications/CodePilot.app
 - [Providers](https://www.codepilot.sh/docs/providers) -- Anthropic、OpenRouter、Bedrock、Vertex、カスタムエンドポイントの設定
 - [MCP サーバー](https://www.codepilot.sh/docs/mcp) -- Model Context Protocol サーバーの追加と管理
 - [Skills](https://www.codepilot.sh/docs/skills) -- カスタムスキル、プロジェクトスキル、skills.sh マーケットプレイス
-- [Bridge](https://www.codepilot.sh/docs/bridge) -- Telegram、Feishu、Discord、QQ によるリモート制御
 - [Assistant Workspace](https://www.codepilot.sh/docs/assistant-workspace) -- ペルソナファイル、Onboarding、メモリ、デイリーチェックイン
 - [FAQ](https://www.codepilot.sh/docs/faq) -- よくある質問と解決方法
 
@@ -195,12 +191,6 @@ API キーが有効でエンドポイントに到達可能であることを確�
 <summary>ワークスペースファイルの場所</summary>
 
 ワークスペース設定後、CodePilot は**ワークスペースルートディレクトリ**に 4 つの Markdown ファイルを作成: `soul.md`（パーソナリティ）、`user.md`（ユーザープロファイル）、`claude.md`（ルール）、`memory.md`（長期メモ）。状態管理（Onboarding 進捗、チェックイン日付）は `.assistant/` サブディレクトリに保存。デイリーメモリは `memory/daily/` に保存。
-</details>
-
-<details>
-<summary>Bridge にはプラットフォームごとの追加設定が必要</summary>
-
-各 Bridge チャンネル（Telegram、Feishu、Discord、QQ）には独自の Bot トークンまたはアプリ認証情報が必要です。サイドバーの **Bridge** ページでチャンネルを設定してください。
 </details>
 
 ---

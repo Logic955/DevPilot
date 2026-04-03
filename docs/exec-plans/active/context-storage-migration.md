@@ -26,7 +26,6 @@
 
 ## Phase 1 前置条件
 
-- 确认 Bridge 系统是否需要 `message_parts` 的结构化读取
 - 评估当前 `content` JSON 数组方案的局限性
 
 ## 详细设计

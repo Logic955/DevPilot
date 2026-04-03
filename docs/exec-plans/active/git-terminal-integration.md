@@ -37,7 +37,7 @@
 ### 当前缺口
 
 - 还没有“独立终端会话”概念。前端目前只能消费聊天流中的工具事件，没有 `start/write/resize/terminate` 这类终端控制面。
-- `preload` 只暴露了 `openPath`、目录选择、安装器和 bridge 状态，没有终端或 git IPC。
+- `preload` 只暴露了 `openPath`、目录选择和安装器，没有终端或 git IPC。
 - 数据层只有 `chat_sessions.working_directory` / `sdk_session_id`，没有 repo root、branch、HEAD、dirty、remote diff 等 git 元数据。
 - git 相关逻辑仍以“Claude 工具可能调用 git”或“外部终端自己执行”为主，应用本身没有统一 git service。
 

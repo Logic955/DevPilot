@@ -15,7 +15,6 @@
 > DevPilot is a personal fork and derivative of [CodePilot](https://github.com/op7418/CodePilot) by [@op7418](https://github.com/op7418), licensed under [Business Source License 1.1](LICENSE).
 >
 > **与上游的主要差异 / Key differences from upstream:**
-> - 移除了 IM Bridge 集成（Telegram、飞书、Discord、QQ）/ IM bridge integrations removed
 > - 项目更名为 **DevPilot**，用于个人使用 / Renamed to DevPilot for personal use
 > - 专注于 Claude Code 桌面工作流 / Focused solely on Claude Code desktop workflow
 >

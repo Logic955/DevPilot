@@ -9,11 +9,11 @@ description: 关于 CodePilot 的常见问题解答。
 
 ### CodePilot 是什么？
 
-CodePilot 是 Claude Code 的桌面工作区。它在 Claude Code CLI 的基础上提供图形界面，整合了多服务商管理、MCP 插件、技能、消息桥接和助理工作区等功能。基于 Electron + Next.js 构建。
+CodePilot 是 Claude Code 的桌面工作区。它在 Claude Code CLI 的基础上提供图形界面，整合了多服务商管理、MCP 插件、技能和助理工作区等功能。基于 Electron + Next.js 构建。
 
 ### CodePilot 和 Claude Code CLI 是什么关系？
 
-CodePilot 是 Claude Code CLI 的图形前端。它通过 Claude Agent SDK 调用 Claude Code CLI 的能力，同时在上层添加了 GUI 专属的功能（多服务商切换、桥接、素材库等）。使用 CodePilot 需要先安装 Claude Code CLI。
+CodePilot 是 Claude Code CLI 的图形前端。它通过 Claude Agent SDK 调用 Claude Code CLI 的能力，同时在上层添加了 GUI 专属的功能（多服务商切换、素材库等）。使用 CodePilot 需要先安装 Claude Code CLI。
 
 ### CodePilot 免费吗？
 
@@ -85,10 +85,6 @@ CodePilot 需要 Node.js 18+。首次启动的设置向导会检测并提供自�
 - **代码** — Claude 可以读写文件、执行命令，适合日常开发
 - **计划** — Claude 只分析方案不执行操作，适合规划阶段
 - **问答** — Claude 只回答问题不使用工具，适合纯问答
-
-### 如何在手机上与 Claude 对话？
-
-使用 [消息桥接](/zh/docs/bridge) 功能，将 CodePilot 连接到 Telegram、Discord、飞书或 QQ。桌面端保持运行即可从手机上与 Claude 对话。
 
 ### Claude 没有响应怎么办？
 

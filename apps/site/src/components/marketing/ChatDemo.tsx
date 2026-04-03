@@ -7,7 +7,6 @@ import {
   Lightning,
   Plug,
   Image,
-  WifiHigh,
   Gear,
   MagnifyingGlass,
   Plus,
@@ -32,7 +31,7 @@ interface ChatMsg {
   role: 'user' | 'assistant';
   text: string;
   delay: number;
-  badge?: { icon: 'skill' | 'mcp' | 'bridge' | 'agent'; label: string };
+  badge?: { icon: 'skill' | 'mcp' | 'agent'; label: string };
   tool?: { name: string; status: 'done' };
 }
 
@@ -74,25 +73,12 @@ const MESSAGES: ChatMsg[] = [
   {
     id: 6,
     role: 'user',
-    text: "I'm heading out. Forward replies to Telegram.",
-    delay: 1400,
-    badge: { icon: 'bridge', label: 'Telegram' },
-  },
-  {
-    id: 7,
-    role: 'assistant',
-    text: "Bridge active \u2014 I'll keep working and send updates to Telegram.",
-    delay: 1600,
-  },
-  {
-    id: 8,
-    role: 'user',
     text: 'Generate a hero section with the new tokens.',
     delay: 1800,
     badge: { icon: 'agent', label: 'Design Agent' },
   },
   {
-    id: 9,
+    id: 7,
     role: 'assistant',
     text: 'Created src/app/hero/ with responsive layout and the new palette. Preview ready.',
     delay: 2200,
@@ -136,7 +122,6 @@ function BadgeIcon({ type }: { type: string }) {
   switch (type) {
     case 'skill': return <Lightning size={12} />;
     case 'mcp': return <Plug size={12} />;
-    case 'bridge': return <WifiHigh size={12} />;
     case 'agent': return <UserCircle size={12} />;
     default: return null;
   }
@@ -175,7 +160,6 @@ const NAV_ITEMS = [
   { icon: Lightning, label: 'Skills', active: false },
   { icon: Plug, label: 'MCP', active: false },
   { icon: Image, label: 'Gallery', active: false },
-  { icon: WifiHigh, label: 'Bridge', active: false },
 ];
 
 function IconSidebar() {
