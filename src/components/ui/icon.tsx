@@ -78,7 +78,7 @@ export {
   Stop,
   Storefront,
   Sun,
-  TelegramLogo,
+
   Terminal,
   Trash,
   TreeStructure,

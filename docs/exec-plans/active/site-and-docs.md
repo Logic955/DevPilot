@@ -141,8 +141,6 @@ content/docs/en/
 │   └── index.mdx                # Provider 配置（Anthropic/OpenAI/Google/Bedrock）
 ├── mcp/
 │   └── index.mdx                # MCP 插件系统
-├── bridge/
-│   └── index.mdx                # 消息桥接（Discord/Telegram/飞书/QQ）
 ├── assistant-workspace/
 │   └── index.mdx                # 助手工作区
 └── faq.mdx                      # 常见问题
@@ -181,10 +179,9 @@ content/docs/zh/
 2. Installation
 3. Providers
 4. MCP
-5. Bridge
-6. Assistant Workspace
-7. FAQ
-8. 中文翻译
+5. Assistant Workspace
+6. FAQ
+7. 中文翻译
 
 ### Phase 4: packages/ui 抽取
 1. 从 src/components/ui/ 抽取到 packages/ui

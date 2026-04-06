@@ -31,7 +31,6 @@
 |------|--------|
 | `src/types/index.ts` | Added `enabled?: boolean` to `MCPServerConfig` |
 | `src/app/api/chat/route.ts` | `loadMcpServers()` filters `enabled === false` |
-| `src/lib/bridge/conversation-engine.ts` | Same filter in bridge's `loadMcpServers()` |
 | `src/app/api/plugins/mcp/route.ts` | No change needed — PUT handler's `{ _source, ...cleanServer }` already preserves `enabled` |
 | `src/components/plugins/McpServerList.tsx` | Added `Switch` toggle per server card; `opacity-50` when disabled |
 | `src/components/plugins/McpManager.tsx` | Added `handlePersistentToggle()` → `PUT /api/plugins/mcp` |
@@ -95,10 +94,9 @@ export function isCacheFresh(providerId: string = 'env'): boolean { ... }
 | `src/app/chat/[id]/page.tsx` | Removed `sessionMode` state; removed `initialMode` prop passing |
 | `src/components/layout/SplitColumn.tsx` | Same as above |
 | `src/app/api/chat/route.ts` | Replaced `effectiveMode` switch with hardcoded `permissionMode = 'acceptEdits'`; `enableFileCheckpointing` defaults to `true` |
-| `src/i18n/en.ts` + `zh.ts` | Commented out `messageInput.modeCode` / `messageInput.modePlan` (not deleted, in case bridge UI references them) |
+| `src/i18n/en.ts` + `zh.ts` | Commented out `messageInput.modeCode` / `messageInput.modePlan` (not deleted) |
 
-- **Kept:** `handleModeChange` callback in ChatView (SDK can still push mode changes). `mode/route.ts` API kept for bridge. DB schema unchanged.
-- **Kept:** `mode` field in request body parsing (bridge still sends it).
+- **Kept:** `handleModeChange` callback in ChatView (SDK can still push mode changes). DB schema unchanged.
 
 ## What Was NOT Changed
 

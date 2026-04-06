@@ -74,7 +74,6 @@ export const en: MarketingContent = {
       { src: '/screenshots/providers.svg', alt: 'Provider management', caption: 'Connect and switch between AI providers' },
       { src: '/screenshots/mcp-skills.svg', alt: 'MCP and Skills', caption: 'Extend with MCP servers and Skills' },
       { src: '/screenshots/workspace.svg', alt: 'Assistant Workspace', caption: 'Inspect files and review changes in real time' },
-      { src: '/screenshots/bridge.svg', alt: 'Bridge messaging', caption: 'Continue conversations from your phone' },
     ],
   },
   features: {
@@ -211,7 +210,7 @@ export const en: MarketingContent = {
       {
         step: '3',
         title: 'Start a session',
-        description: 'Connect Workspace, MCP, or Bridge as needed.',
+        description: 'Connect Workspace, MCP, or Skills as needed.',
       },
     ],
   },
@@ -221,7 +220,6 @@ export const en: MarketingContent = {
       { title: 'Getting Started', description: 'Installation and first steps.', href: '/docs' },
       { title: 'Providers', description: 'Configure AI providers.', href: '/docs/providers' },
       { title: 'MCP', description: 'Set up MCP servers.', href: '/docs/mcp' },
-      { title: 'Bridge', description: 'Connect messaging platforms.', href: '/docs/bridge' },
       { title: 'Workspace', description: 'File inspection and context.', href: '/docs/workspace' },
     ],
   },

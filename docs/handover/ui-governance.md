@@ -126,7 +126,7 @@ src/lib/constants/          → 纯数据常量，不引用 UI 层
 ## 已知遗留（不在本轮治理范围）
 
 1. **ai-elements 层**：`prompt-input.tsx`（1,345L）仍含 30+ thin re-export wrappers；`file-tree.tsx` 有可访问性 warning
-2. **全仓 80 warnings**：主要是 tests 中的死代码、bridge adapters 中的 unused vars、`stream-session-manager.ts` 中的 unused imports
+2. **全仓 80 warnings**：主要是 tests 中的死代码、`stream-session-manager.ts` 中的 unused imports
 3. **CodeBlock 两套并存**：`chat/CodeBlock.tsx`（Prism）和 `ai-elements/code-block.tsx`（Shiki），计划统一为 Shiki
 4. **`catch { // ignore }` 模式**：50+ 处静默错误，需逐步加 toast 或 console.warn
 

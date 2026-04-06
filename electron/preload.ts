@@ -26,9 +26,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
       return () => { ipcRenderer.removeListener('install:progress', listener); };
     },
   },
-  bridge: {
-    isActive: () => ipcRenderer.invoke('bridge:is-active'),
-  },
   widget: {
     exportPng: (html: string, width: number, isDark: boolean) =>
       ipcRenderer.invoke('widget:export-png', { html, width, isDark }),

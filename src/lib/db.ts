@@ -592,19 +592,6 @@ function migrateDb(db: Database.Database): void {
     }
   }
 
-  // Drop legacy bridge tables if they exist (no longer used)
-  db.exec(`
-    DROP TABLE IF EXISTS channel_permission_links;
-    DROP TABLE IF EXISTS channel_audit_logs;
-    DROP TABLE IF EXISTS channel_outbound_refs;
-    DROP TABLE IF EXISTS channel_dedupe;
-    DROP TABLE IF EXISTS channel_offsets;
-    DROP TABLE IF EXISTS channel_bindings;
-    DROP TABLE IF EXISTS channel_configs;
-    DROP TABLE IF EXISTS weixin_context_tokens;
-    DROP TABLE IF EXISTS weixin_accounts;
-  `);
-
   // CLI tools: user-added custom tools
   db.exec(`
     CREATE TABLE IF NOT EXISTS cli_tools_custom (

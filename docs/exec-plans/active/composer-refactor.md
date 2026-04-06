@@ -31,21 +31,13 @@
 - [ ] 新建 hooks/useContextUsage.ts: 解析 usage、计算 ratio
 - [ ] 集成到 ChatComposerActionBar
 
-### Track 4: Bridge 联动
-- [ ] permission-broker.ts: 检查 session permission_profile
-- [ ] bridge-manager.ts: full_access 时不发权限通知
-- [ ] conversation-engine.ts: full_access 时跳过权限卡片
-- [ ] 处理切换时已存在的 pending permission 失效
-
 ## 依赖关系
-- Track 2/3/4 都依赖 Track 1 的类型和 DB 字段
+- Track 2/3 都依赖 Track 1 的类型和 DB 字段
 - Track 2 和 Track 3 可并行，最后在 ChatView 集成
-- Track 4 独立于 UI 轨道
 
 ## 测试清单
 - [ ] session 级 permission_profile 持久化
 - [ ] slash 按钮触发现有命令流程
 - [ ] full_access 下本地不显示权限确认
-- [ ] full_access 下 bridge 不发权限通知
 - [ ] context hover 展示明细
 - [ ] composer 布局回归

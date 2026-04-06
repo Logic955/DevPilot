@@ -47,9 +47,6 @@ v0.38.4 引入全局默认模型机制，替代了之前的"默认服务商"概�
 - src/hooks/useProviderModels.ts — globalDefaultModel / globalDefaultProvider
 - src/components/chat/MessageInput.tsx — 自动纠正逻辑（不使用全局默认）
 
-## 与 Bridge 系统的关系
-Bridge 系统使用独立的 bridge_default_provider_id，与全局默认模型分离。
-
 ## 测试覆盖
 - src/__tests__/unit/provider-resolver.test.ts — Global Default Model describe block（7 条测试）
   - env provider 归属正确/不正确

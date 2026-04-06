@@ -71,8 +71,8 @@
 
 **风险控制**
 
-- 不建议本轮直接删除 DB schema、TypeScript union、bridge `/mode` 命令，否则会把“延迟治理”扩成“跨桌面 + 桥接 + 数据兼容”的大重构。
-- 旧 session 若仍带 `ask` / `plan`，桌面主聊天读取时统一按 `code` 执行；桥接路径暂不动。
+- 不建议本轮直接删除 DB schema、TypeScript union，否则会把”延迟治理”扩成”跨桌面 + 数据兼容”的大重构。
+- 旧 session 若仍带 `ask` / `plan`，桌面主聊天读取时统一按 `code` 执行。
 
 ### Phase 2: MCP 持久启停开关
 
@@ -83,7 +83,7 @@
 **现状问题**
 
 - 现有 `src/app/api/plugins/mcp/toggle/route.ts` 只对当前活动 conversation 做 runtime toggle。
-- 主聊天和桥接加载 MCP 时，`src/app/api/chat/route.ts` 与 `src/lib/bridge/conversation-engine.ts` 会直接读取配置文件并全部注入，没有“持久禁用”的过滤层。
+- 主聊天加载 MCP 时，`src/app/api/chat/route.ts` 会直接读取配置文件并全部注入，没有”持久禁用”的过滤层。
 
 **实现**
 
@@ -99,8 +99,6 @@
   - 保存开关改为走配置更新，而不是仅调用 runtime toggle。
 - `src/app/api/chat/route.ts`
   - `loadMcpServers()` 过滤 `enabled === false` 的 server。
-- `src/lib/bridge/conversation-engine.ts`
-  - 同步过滤 `enabled === false` 的 server，保证桌面和桥接行为一致。
 - `src/app/api/plugins/mcp/toggle/route.ts`
   - 保留给“活动会话临时 reconnect / runtime toggle”使用，或者标记为仅 runtime 语义；不要拿它承载持久配置。
 
