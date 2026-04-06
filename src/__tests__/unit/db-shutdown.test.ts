@@ -80,7 +80,7 @@ describe('closeDb', () => {
     createSession('WAL Test 2');
     createSession('WAL Test 3');
 
-    const dbPath = path.join(tmpDir, 'codepilot.db');
+    const dbPath = path.join(tmpDir, 'devpilot.db');
     assert.ok(fs.existsSync(dbPath));
 
     // Close the database (should checkpoint WAL)
