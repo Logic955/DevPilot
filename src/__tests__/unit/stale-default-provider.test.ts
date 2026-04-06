@@ -66,9 +66,11 @@ describe('Stale default_provider_id cleanup', () => {
   beforeEach(() => {
     originalDefault = getDefaultProviderId();
     originalGlobalProvider = getSetting('global_default_model_provider') || undefined;
-    // Clear global_default_model_provider so these tests exercise the legacy path
-    setSetting('global_default_model_provider', '');
     cleanupTestProviders();
+    // Clear BOTH settings AFTER cleanup so tests start with a clean slate.
+    // cleanupTestProviders → deleteProvider may leave stale refs; wipe them.
+    setSetting('global_default_model_provider', '');
+    setSetting('default_provider_id', '');
   });
 
   afterEach(() => {
